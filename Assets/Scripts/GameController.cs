@@ -54,7 +54,36 @@ public class GameController : MonoBehaviour
                     AddBodyPiece();
             }
         }
+    }
+
+    void FixedUpdate() {
+        if(!deathScreenActive){
+            MoveWorm();
+        }
+    }
+
+    private void MoveWorm()
+    {
+        FindObjectOfType<PlayerController>().MovePlayer();
+        for(int i = 0; i < bodyPieces.Count; i++){
+            bodyPieces[i].MoveBody();
+        }
         
+    }
+
+    public void AlignAll(){
+        moveLock = true;
+        Vector3 temp = new Vector3(0, 0, 0);
+        temp.x = Mathf.Round(player.transform.position.x);
+        temp.z = Mathf.Round(player.transform.position.z);
+        player.transform.position = temp;
+
+        for(int i = 0; i < bodyPieceObjects.Count; i++){
+            Vector3 temp2 = new Vector3(0, 0, 0);
+            temp2.x = Mathf.Round(bodyPieceObjects[i].transform.position.x);
+            temp2.z = Mathf.Round(bodyPieceObjects[i].transform.position.z);
+            bodyPieceObjects[i].transform.position = temp2;
+        }
     }
 
     /// <summary>

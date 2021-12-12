@@ -27,12 +27,9 @@ public class BodyController : MonoBehaviour
         transform.Translate(velocity);  
     }
 
-    /// <summary>
-    /// Unity fixed update function - runs 100 frames per second
-    /// </summary>
-    private void FixedUpdate()
-    {
-        //if its the first piece, check if it needs to rotate based upon the player itself
+    
+    public void MoveBody(){
+         //if its the first piece, check if it needs to rotate based upon the player itself
         if (bodyPieceNum == 0)
         {
             //check to see if the player has queued any rotations
@@ -99,13 +96,13 @@ public class BodyController : MonoBehaviour
             //check if the body piece has any children, 
             //and if it has rotations queued up but is 1 unit past the queued rotation
             if (lastRotatePositionQueue.Count > 0 && GameController.bodyPieces.Count < bodyPieceNum + 2 &&
-                ((transform.position.x <= lastRotatePositionQueue[0].x + 1 + GameController.speed &&
+                ((transform.position.x <= lastRotatePositionQueue[0].x + 1 + GameController.speed * 2 &&
                 transform.position.x >= lastRotatePositionQueue[0].x + 1 - GameController.marginOfError) || 
-                (transform.position.x >= lastRotatePositionQueue[0].x - 1 - GameController.speed &&
+                (transform.position.x >= lastRotatePositionQueue[0].x - 1 - GameController.speed * 2 &&
                 transform.position.x <= lastRotatePositionQueue[0].x - 1 + GameController.marginOfError) || 
-                (transform.position.z <= lastRotatePositionQueue[0].z + 1 + GameController.speed &&
+                (transform.position.z <= lastRotatePositionQueue[0].z + 1 + GameController.speed * 2&&
                 transform.position.z >= lastRotatePositionQueue[0].z + 1 - GameController.marginOfError) ||
-                (transform.position.z >= lastRotatePositionQueue[0].z - 1 - GameController.speed &&
+                (transform.position.z >= lastRotatePositionQueue[0].z - 1 - GameController.speed * 2 &&
                 transform.position.z <= lastRotatePositionQueue[0].z - 1 + GameController.marginOfError)))
             {
                 
@@ -119,7 +116,8 @@ public class BodyController : MonoBehaviour
         if (GameController.moveLock == false)
             transform.Translate(velocity);
     }
-    
+
+
     /// <summary>
     /// Helper method to align the body piece to the grid
     /// </summary>

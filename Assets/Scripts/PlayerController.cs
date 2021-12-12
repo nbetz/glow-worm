@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour
         //adds a body piece and moves the food if the worm touches the food    
         if(collider.gameObject.tag == "Food")
         {
+            //GameController.speed += 0.001f;
             FindObjectOfType<GameController>().AddBodyPiece();
             FindObjectOfType<GameController>().RespawnFood();
             GameController.score += 10;
@@ -128,12 +129,8 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
-    /// <summary>
-    /// Unity fixed update function - runs 100 frames per second
-    /// </summary>
-    private void FixedUpdate()
-    {
+
+    public void MovePlayer(){
         if (GameController.moveLock == false)
         {
             if(goUp == true)
@@ -149,7 +146,8 @@ public class PlayerController : MonoBehaviour
                     velocity.z = GameController.speed;
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    AlignToGrid();
+                    //AlignToGrid();
+                    FindObjectOfType<GameController>().AlignAll();
                     lastRotatePositionQueue.Add(transform.position);
                     lastVelocityQueue.Add(velocity);
 
@@ -170,7 +168,8 @@ public class PlayerController : MonoBehaviour
                     velocity.z = -GameController.speed;
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    AlignToGrid();
+                    //AlignToGrid();
+                    FindObjectOfType<GameController>().AlignAll();
                     lastRotatePositionQueue.Add(transform.position);
                     lastVelocityQueue.Add(velocity);
 
@@ -190,7 +189,8 @@ public class PlayerController : MonoBehaviour
                     velocity.x = -GameController.speed;
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    AlignToGrid();
+                    //AlignToGrid();
+                    FindObjectOfType<GameController>().AlignAll();
                     lastRotatePositionQueue.Add(transform.position);
                     lastVelocityQueue.Add(velocity);
 
@@ -210,7 +210,8 @@ public class PlayerController : MonoBehaviour
                     velocity.x = GameController.speed;
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    AlignToGrid();
+                    //AlignToGrid();
+                    FindObjectOfType<GameController>().AlignAll();
                     lastRotatePositionQueue.Add(transform.position);
                     lastVelocityQueue.Add(velocity);
 
