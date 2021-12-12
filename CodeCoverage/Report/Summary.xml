@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CoverageReport scope="Summary">
+  <Summary>
+    <Generatedon>10/16/2021 - 11:13:22 AM</Generatedon>
+    <Parser>MultiReportParser (2x OpenCoverParser)</Parser>
+    <Assemblies>2</Assemblies>
+    <Classes>8</Classes>
+    <Files>8</Files>
+    <Coveredlines>77</Coveredlines>
+    <Uncoveredlines>184</Uncoveredlines>
+    <Coverablelines>261</Coverablelines>
+    <Totallines>692</Totallines>
+    <Linecoverage>29.5</Linecoverage>
+    <Coveredbranches>0</Coveredbranches>
+    <Totalbranches>0</Totalbranches>
+  </Summary>
+  <Coverage>
+    <Assembly name="Assembly-CSharp" classes="7" coverage="29.8" coveredlines="77" coverablelines="258" totallines="667" branchcoverage="" coveredbranches="0" totalbranches="0">
+      <Class name="BodyController" coverage="33.3" coveredlines="15" coverablelines="45" totallines="134" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="GameController" coverage="68.7" coveredlines="33" coverablelines="48" totallines="124" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="PlayerController" coverage="20.6" coveredlines="27" coverablelines="131" totallines="273" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UIDeathScreen" coverage="0" coveredlines="0" coverablelines="4" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UIGameHUD" coverage="100" coveredlines="2" coverablelines="2" totallines="18" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UIMainMenu" coverage="0" coveredlines="0" coverablelines="7" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="UISettings" coverage="0" coveredlines="0" coverablelines="21" totallines="68" branchcoverage="" coveredbranches="0" totalbranches="0" />
+    </Assembly>
+    <Assembly name="Tests" classes="1" coverage="0" coveredlines="0" coverablelines="3" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0">
+      <Class name="NewTestScript" coverage="0" coveredlines="0" coverablelines="3" totallines="25" branchcoverage="" coveredbranches="0" totalbranches="0" />
+    </Assembly>
+  </Coverage>
+</CoverageReport>
