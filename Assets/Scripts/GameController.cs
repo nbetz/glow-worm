@@ -32,8 +32,8 @@ public class GameController : MonoBehaviour
         player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
         moveLock = false;
 
-        //create the player at 4,0,3
-        food = Object.Instantiate(prefabFood, new Vector3(4f, 0f, 3f), Quaternion.identity);
+        //create the food at a random location
+        food = Object.Instantiate(prefabFood, SpawnLocation(), Quaternion.identity);
     }
 
     /// <summary>
@@ -120,7 +120,32 @@ public class GameController : MonoBehaviour
     /// <returns>Vector3 with random X and Y within bounds</returns> 
     private Vector3 SpawnLocation()
     {
-        return new Vector3(Random.Range(-12, 11), 0, Random.Range(-6, 5));
+        Vector3 location = new Vector3(Random.Range(-12, 12), 0, Random.Range(-6, 6));
+        Vector3 headPosition = player.transform.position;
+
+        //check if the head of the worm is where the randomly generated location is
+        if((location.x == Mathf.Floor(headPosition.x) || location.x == Mathf.Ceil(headPosition.x)) &&
+        (location.z == Mathf.Floor(headPosition.z) || location.z == Mathf.Ceil(headPosition.z))){
+            Debug.Log("retrying after attempting to place inside head at position X: " 
+             + location.x + " Z: " + location.z);
+            
+            //retry if worm is at location
+            return SpawnLocation();
+        }
+
+        //check if he body of the worm is where the randomly generated location is
+        for(int i = 0; i < bodyPieces.Count; i++){
+            Vector3 temp = bodyPieces[i].transform.position;
+            if((location.x == Mathf.Floor(temp.x) || location.x == Mathf.Ceil(temp.x)) &&
+            (location.z == Mathf.Floor(temp.z) || location.z == Mathf.Ceil(temp.z))){
+                Debug.Log("retrying after attempting to place inside bodypiece " +
+                 i + "at position X: " + location.x + " Z: " + location.z);
+                
+                //retry if worm is at location
+                return SpawnLocation();
+            }
+        }
+        return location;
     }
 
     /// <summary>
