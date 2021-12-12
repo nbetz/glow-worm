@@ -1,10 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class UIDeathScreen : MonoBehaviour
 {
+
+    public TextMeshProUGUI scoreText;
+
+    private void Update()
+    {
+        scoreText.text = "SCORE: " + PlayerPrefs.GetInt("PrevScore");
+    }
 
     /// <summary>
     /// Target function for try again button

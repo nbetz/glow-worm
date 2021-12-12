@@ -128,7 +128,19 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void Die()
     {
-        foreach(GameObject b in bodyPieceObjects)
+        // Check for a new high score
+        if (score > PlayerPrefs.GetInt("HighScore"))
+            PlayerPrefs.SetInt("HighScore", score);
+        
+        PlayerPrefs.SetInt("PrevScore", score);
+        
+        // Hide the game HUD and show the death screen
+        deathScreenActive = true;
+        gameHUD.SetActive(false);
+        deathScreen.SetActive(deathScreenActive);
+        
+        // Destroy / reset game objects
+        foreach(GameObject b in bodyPieceObjects) 
             Destroy(b);
         bodyPieceObjects.Clear();
         bodyPieces.Clear();
@@ -141,10 +153,7 @@ public class GameController : MonoBehaviour
         food = null;
         score = 0;
         moveLock = false;
-        // Hide the game HUD and show the death screen
-        deathScreenActive = true;
-        gameHUD.SetActive(false);
-        deathScreen.SetActive(deathScreenActive);
+        
         
     }
 }

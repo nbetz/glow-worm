@@ -88,11 +88,11 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_C12EA591: {r: 0.07352731, g: 0.18699849, b: 1.1990601, a: 1}
+    - Color_C12EA591: {r: 1.0239298, g: 1.0239298, b: 1.0239298, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6549839114684273084

@@ -12,6 +12,7 @@ public class UIGameHUD : MonoBehaviour
     /// </summary>
     void Start()
     {
+        //gameController = FindObjectOfType<GameController>();
         //On start, set the text to 0
         scoreText.text = "SCORE: 0";
     }
