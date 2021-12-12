@@ -32,9 +32,11 @@ public class PlayerController : MonoBehaviour
         //adds a body piece and moves the food if the worm touches the food    
         if(collider.gameObject.tag == "Food")
         {
-            //GameController.speed += 0.001f;
-            FindObjectOfType<GameController>().AddBodyPiece();
-            FindObjectOfType<GameController>().RespawnFood();
+            //FindObjectOfType<GameController>().AddBodyPiece();
+            GameController.addBodyPiece = true;
+            //FindObjectOfType<GameController>().RespawnFood();
+            GameController.respawnFood = true;
+            GameController.updateSpeed = true;
             GameController.score += 10;
         }
 
@@ -131,6 +133,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void MovePlayer(){
+        bool snapped = false;
         if (GameController.moveLock == false)
         {
             if(goUp == true)
@@ -147,8 +150,15 @@ public class PlayerController : MonoBehaviour
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
                     //AlignToGrid();
-                    FindObjectOfType<GameController>().AlignAll();
-                    lastRotatePositionQueue.Add(transform.position);
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
+                    
+                    Vector3 temp = new Vector3(0, 0, 0);
+                    temp.x = Mathf.Round(transform.position.x);
+                    temp.z = Mathf.Round(transform.position.z);
+                    
+                    lastRotatePositionQueue.Add(temp);
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -169,8 +179,15 @@ public class PlayerController : MonoBehaviour
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
                     //AlignToGrid();
-                    FindObjectOfType<GameController>().AlignAll();
-                    lastRotatePositionQueue.Add(transform.position);
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
+
+                    Vector3 temp = new Vector3(0, 0, 0);
+                    temp.x = Mathf.Round(transform.position.x);
+                    temp.z = Mathf.Round(transform.position.z);
+                    
+                    lastRotatePositionQueue.Add(temp);
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -190,8 +207,15 @@ public class PlayerController : MonoBehaviour
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
                     //AlignToGrid();
-                    FindObjectOfType<GameController>().AlignAll();
-                    lastRotatePositionQueue.Add(transform.position);
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
+
+                    Vector3 temp = new Vector3(0, 0, 0);
+                    temp.x = Mathf.Round(transform.position.x);
+                    temp.z = Mathf.Round(transform.position.z);
+                    
+                    lastRotatePositionQueue.Add(temp);
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -211,8 +235,15 @@ public class PlayerController : MonoBehaviour
 
                     //try to round the position to be exactly a whole number then save it in lastRotatePosition
                     //AlignToGrid();
-                    FindObjectOfType<GameController>().AlignAll();
-                    lastRotatePositionQueue.Add(transform.position);
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
+                    
+                    Vector3 temp = new Vector3(0, 0, 0);
+                    temp.x = Mathf.Round(transform.position.x);
+                    temp.z = Mathf.Round(transform.position.z);
+                    
+                    lastRotatePositionQueue.Add(temp);
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -221,7 +252,8 @@ public class PlayerController : MonoBehaviour
             }
 
             //move the head every fixed update frame
-            transform.Translate(velocity);
+            if (GameController.moveLock == false && snapped == false)
+                transform.Translate(velocity);
 
             //skip the number of frames needed before moving
             //the player in the direction they want on the next frame 

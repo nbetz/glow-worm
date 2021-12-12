@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
     public static List<GameObject> bodyPieceObjects = new List<GameObject>();
     public static List<BodyController> bodyPieces = new List<BodyController>();
     public static bool moveLock = false;
-    GameObject player;
+    public GameObject player;
     public GameObject food;
     public GameObject gameHUD;
     public GameObject deathScreen;
@@ -22,6 +22,12 @@ public class GameController : MonoBehaviour
     public static float speed = 0.03f;
     public static int score = 0;
 
+    public static bool addBodyPiece = false;
+    public static bool updateSpeed = false;
+
+    public static bool respawnFood = false;
+
+    public static bool snapToGrid = false;
     /// <summary>
     /// Unity start function - ran on first frame
     /// </summary>
@@ -30,7 +36,6 @@ public class GameController : MonoBehaviour
         //create the player at 0,0,0
         moveLock = true;
         player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
-        moveLock = false;
 
         //create the food at a random location
         food = Object.Instantiate(prefabFood, SpawnLocation(), Quaternion.identity);
@@ -50,8 +55,10 @@ public class GameController : MonoBehaviour
             //when the worm has no body add 2 body pieces 1 frame apart
                 if(bodyPieces.Count == 0)
                     AddBodyPiece();
-                else if (bodyPieces.Count == 1)
+                else if (bodyPieces.Count == 1){
                     AddBodyPiece();
+                    moveLock = false;
+                }
             }
         }
     }
@@ -59,6 +66,22 @@ public class GameController : MonoBehaviour
     void FixedUpdate() {
         if(!deathScreenActive){
             MoveWorm();
+            if(addBodyPiece == true){
+                AddBodyPiece();
+                addBodyPiece = false;          
+            }
+            if(snapToGrid == true){
+                AlignAll();
+                snapToGrid = false;
+            }
+            if(respawnFood == true){
+                RespawnFood();
+                respawnFood = false;
+            }
+            if(updateSpeed == true){
+                speed += 0.0005f;
+                updateSpeed = false;
+            }
         }
     }
 
@@ -68,7 +91,6 @@ public class GameController : MonoBehaviour
         for(int i = 0; i < bodyPieces.Count; i++){
             bodyPieces[i].MoveBody();
         }
-        
     }
 
     public void AlignAll(){
@@ -82,8 +104,9 @@ public class GameController : MonoBehaviour
             Vector3 temp2 = new Vector3(0, 0, 0);
             temp2.x = Mathf.Round(bodyPieceObjects[i].transform.position.x);
             temp2.z = Mathf.Round(bodyPieceObjects[i].transform.position.z);
-            bodyPieceObjects[i].transform.position = temp2;
+            bodyPieceObjects[i].transform.position = temp2;            
         }
+        moveLock = false;
     }
 
     /// <summary>
@@ -94,19 +117,19 @@ public class GameController : MonoBehaviour
         //checks if the worm has any body pieces
         if (bodyPieceObjects.Count == 0)
         {
-            moveLock = true;
+            //moveLock = true;
             Vector3 position = player.transform.position;
             Vector3 velocity = PlayerController.velocity;
             AddBodyPieceHelper(position, velocity);
-            moveLock = false;
+            //moveLock = false;
         }
         else
         {
-            moveLock = true;
+            //moveLock = true;
             Vector3 position = bodyPieces[bodyPieces.Count - 1].transform.position;
             Vector3 velocity = bodyPieces[bodyPieces.Count - 1].velocity;
             AddBodyPieceHelper(position, velocity);
-            moveLock = false;
+            //moveLock = false;
         }
     }
 
@@ -133,6 +156,7 @@ public class GameController : MonoBehaviour
         int bodyPieceNum = bodyPieceObjects.Count - 1;
         bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
         bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
+        bodyPieces[bodyPieceNum].spawnVelocity = velocity;
     }
 
     /// <summary>
@@ -207,7 +231,10 @@ public class GameController : MonoBehaviour
         food = null;
         score = 0;
         moveLock = false;
-        
-        
+        addBodyPiece = false;
+        updateSpeed = false;
+        respawnFood = false;
+        snapToGrid = false;
+        speed = 0.03f;   
     }
 }

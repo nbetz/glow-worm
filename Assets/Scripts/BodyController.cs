@@ -5,6 +5,11 @@ public class BodyController : MonoBehaviour
 {
     //Instance variables
     public Vector3 velocity;
+
+    public Vector3 spawnLocation;
+    public Vector3 spawnLocation2;
+    public Vector3 spawnVelocity;
+
     public List<Vector3> lastRotatePositionQueue = new List<Vector3>();
     public List<Vector3> lastVelocityQueue = new List<Vector3>();
     public int bodyPieceNum;
@@ -23,12 +28,17 @@ public class BodyController : MonoBehaviour
         else
             velocity = GameController.bodyPieces[bodyPieceNum - 1].velocity;
 
-        //remove the gap between pieces by clipping into the piece in front
-        transform.Translate(velocity);  
+        spawnLocation = transform.position;
+        //AlignToGrid();
+        //spawnLocation2 = transform.position;
+        
+        // //remove the gap between pieces by clipping into the piece in front
+        // transform.Translate(velocity);  
     }
 
     
     public void MoveBody(){
+        bool snapped = false;
          //if its the first piece, check if it needs to rotate based upon the player itself
         if (bodyPieceNum == 0)
         {
@@ -45,10 +55,12 @@ public class BodyController : MonoBehaviour
                     (transform.position.z <= lastRotatePosition.z + GameController.speed && 
                     transform.position.z >= lastRotatePosition.z - GameController.marginOfError))
                 {
-                    GameController.moveLock = true;
+                    //GameController.moveLock = true;
 
                     //alligns the body piece to the grid
-                    AlignToGrid();
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
 
                     //set the velocity to the players then removes from player queues and adds to self queues
                     velocity = lastVelocity;
@@ -56,8 +68,7 @@ public class BodyController : MonoBehaviour
                     lastVelocityQueue.Add(lastVelocity);
                     PlayerController.lastRotatePositionQueue.RemoveAt(0);
                     PlayerController.lastVelocityQueue.RemoveAt(0);
-
-                    GameController.moveLock = false;
+                    //GameController.moveLock = false;
                 }
             }
         }
@@ -77,10 +88,12 @@ public class BodyController : MonoBehaviour
                     (transform.position.z <= lastRotatePosition.z + GameController.speed && 
                     transform.position.z >= lastRotatePosition.z - GameController.marginOfError))
                 {
-                    GameController.moveLock = true;
+                    //GameController.moveLock = true;
 
                     //aligns the body piece to the grid
-                    AlignToGrid();
+                    //FindObjectOfType<GameController>().AlignAll();
+                    GameController.snapToGrid = true;
+                    snapped = true;
 
                     //set the velocity to the bodyPiece in front of it, then removes from that pieces queues and adds to its own
                     velocity = lastVelocity;
@@ -89,7 +102,7 @@ public class BodyController : MonoBehaviour
                     GameController.bodyPieces[bodyPieceNum - 1].lastRotatePositionQueue.RemoveAt(0);
                     GameController.bodyPieces[bodyPieceNum - 1].lastVelocityQueue.RemoveAt(0);
 
-                    GameController.moveLock = false;
+                    //GameController.moveLock = false;
                 }
             }
             
@@ -113,8 +126,9 @@ public class BodyController : MonoBehaviour
         }
 
         //move the body every fixedupdate frame
-        if (GameController.moveLock == false)
+        if (GameController.moveLock == false && snapped == false){
             transform.Translate(velocity);
+        }
     }
 
 
