@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     public GameObject food;
     public GameObject gameHUD;
     public GameObject deathScreen;
+
+    public bool deathScreenActive = false;
     public static float marginOfError = 0.0005f;
     public static float speed = 0.03f;
     public static int score = 0;
@@ -39,11 +41,20 @@ public class GameController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        //when the worm has no body add 2 body pieces 1 frame apart
-        if(bodyPieces.Count == 0)
-            AddBodyPiece();
-        else if (bodyPieces.Count == 1)
-            AddBodyPiece();
+        if(!deathScreenActive){
+            if(player == null){
+            player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
+            food = Object.Instantiate(prefabFood, new Vector3(4f, 0f, 3f), Quaternion.identity);
+
+            }else{
+            //when the worm has no body add 2 body pieces 1 frame apart
+                if(bodyPieces.Count == 0)
+                    AddBodyPiece();
+                else if (bodyPieces.Count == 1)
+                    AddBodyPiece();
+            }
+        }
+        
     }
 
     /// <summary>
@@ -117,8 +128,23 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void Die()
     {
+        foreach(GameObject b in bodyPieceObjects)
+            Destroy(b);
+        bodyPieceObjects.Clear();
+        bodyPieces.Clear();
+        PlayerController.lastRotatePositionQueue.Clear();
+        PlayerController.lastVelocityQueue.Clear();
+        PlayerController.velocity = new Vector3(speed, 0, 0);
+        Destroy(player);
+        Destroy(food);
+        player = null;
+        food = null;
+        score = 0;
+        moveLock = false;
         // Hide the game HUD and show the death screen
+        deathScreenActive = true;
         gameHUD.SetActive(false);
-        deathScreen.SetActive(true);
+        deathScreen.SetActive(deathScreenActive);
+        
     }
 }
