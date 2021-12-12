@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UISettings : MonoBehaviour
@@ -114,6 +115,8 @@ public class UISettings : MonoBehaviour
         
         gameObject.SetActive(false);
         mainMenuCanvas.SetActive(true);
+        
+        SceneManager.LoadScene("MainMenu");
     }
 
     /// <summary>
@@ -121,10 +124,12 @@ public class UISettings : MonoBehaviour
     /// </summary>
     public void ClickReset()
     {
+        PlayerPrefs.DeleteAll();
         PlayerPrefs.SetInt("HighScore", 0);
         PlayerPrefs.SetString("WormColor", "#" + ColorUtility.ToHtmlStringRGB(defaultWormColor));
         PlayerPrefs.SetString("FoodColor", "#" + ColorUtility.ToHtmlStringRGB(defaultFoodColor));
-        
+        SceneManager.LoadScene("MainMenu");
+
     }
 
     /// <summary>
