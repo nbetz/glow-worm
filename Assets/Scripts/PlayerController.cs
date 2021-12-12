@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     private static int goUpWait = 0;
     private static int goDownWait = 0;
 
+    public GameObject foodPickupParticle;
+
     /// <summary>
     /// Unity trigger function that is ran anytime this object collides
     /// with another collider
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour
             GameController.respawnFood = true;
             GameController.updateSpeed = true;
             GameController.score += 10;
+            //Instantiate(foodPickupParticle, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
         }
 
         //ends the game if the worm touches a body piece in the direction its moving

@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c19b4fcefc9c4449bd75d885472dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  foodPickupParticle: {fileID: 5680113118691664951, guid: 083a657422057d3499d34a329b2260ab,
+    type: 3}
 --- !u!54 &1146295418602282516
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -7,19 +7,27 @@ using UnityEngine.SceneManagement;
 
 public class UIMainMenu : MonoBehaviour
 {
+
     public GameObject settingsCanvas;
 
     public TextMeshProUGUI highScoreText;
+    public TextMeshProUGUI titleText;
 
+    public TMP_FontAsset gameFont;
+    
     public Material wormMaterial;
     public Material foodMaterial;
     private Color savedWormColor;
     private Color savedFoodColor;
 
+    // Unit Testing Variables
+    public bool quit = false;
+    public int highScore;
     private void Start()
     {
         // Load data
         highScoreText.text = "HIGH SCORE: " + PlayerPrefs.GetInt("HighScore");
+        highScore = PlayerPrefs.GetInt("HighScore");
         
         Color tempColor1;
         Color tempColor2;
@@ -27,6 +35,10 @@ public class UIMainMenu : MonoBehaviour
             savedWormColor = tempColor1;
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("FoodColor"), out tempColor2))
             savedFoodColor = tempColor2;
+
+        titleText.color = savedWormColor;
+
+        gameFont.material = wormMaterial;
 
         // Set the material colors to the saved colors
         wormMaterial.color = savedWormColor;
@@ -50,5 +62,6 @@ public class UIMainMenu : MonoBehaviour
     public void ClickQuit()
     {
         Application.Quit();
+        quit = true;
     }
 }

@@ -1017,6 +1017,14 @@ PrefabInstance:
       propertyPath: deathScreen
       value: 
       objectReference: {fileID: 1267624610}
+    - target: {fileID: -5366205810124454327, guid: 12f7a6be50bbcab488204e2e1c861dcf, type: 3}
+      propertyPath: foodParticle
+      value: 
+      objectReference: {fileID: 5680113118691664951, guid: 083a657422057d3499d34a329b2260ab, type: 3}
+    - target: {fileID: -5366205810124454327, guid: 12f7a6be50bbcab488204e2e1c861dcf, type: 3}
+      propertyPath: playerParticle
+      value: 
+      objectReference: {fileID: 5680113118691664951, guid: 8cda037dcd205364fb3c13d0c28b3d5b, type: 3}
     - target: {fileID: 5716063702417693691, guid: 12f7a6be50bbcab488204e2e1c861dcf, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -1339,6 +1347,7 @@ GameObject:
   - component: {fileID: 1267624613}
   - component: {fileID: 1267624612}
   - component: {fileID: 1267624611}
+  - component: {fileID: 1267624616}
   m_Layer: 5
   m_Name: DeathScreen
   m_TagString: Untagged
@@ -1444,6 +1453,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!111 &1267624616
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267624610}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 9997d3c571efc5f4badf027623ddc906, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: 9997d3c571efc5f4badf027623ddc906, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1304875294
 GameObject:
   m_ObjectHideFlags: 0
@@ -1476,10 +1501,10 @@ RectTransform:
   m_Father: {fileID: 1267624615}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1685, y: 948}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1304875296
 MonoBehaviour:
@@ -1539,8 +1564,16 @@ PrefabInstance:
       value: 62.1
       objectReference: {fileID: 0}
     - target: {fileID: 2261658371531234784, guid: 991628e911591d64dab734a6c61a9389, type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261658371531234784, guid: 991628e911591d64dab734a6c61a9389, type: 3}
       propertyPath: m_fontSizeBase
       value: 62.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2261658371531234784, guid: 991628e911591d64dab734a6c61a9389, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 16777215
       objectReference: {fileID: 0}
     - target: {fileID: 2261658371531234785, guid: 991628e911591d64dab734a6c61a9389, type: 3}
       propertyPath: m_Pivot.x

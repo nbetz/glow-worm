@@ -16,6 +16,8 @@ public class GameController : MonoBehaviour
     public GameObject food;
     public GameObject gameHUD;
     public GameObject deathScreen;
+    public GameObject foodParticle;
+    public GameObject playerParticle;
 
     public bool deathScreenActive = false;
     public static float marginOfError = 0.0005f;
@@ -164,7 +166,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void RespawnFood()
     {
-        food.transform.SetPositionAndRotation(SpawnLocation(), Quaternion.identity);
+        Vector3 spawnLocation = SpawnLocation();
+        food.transform.SetPositionAndRotation(spawnLocation, Quaternion.identity);
+        Instantiate(foodParticle, spawnLocation, Quaternion.identity);
     }
 
     /// <summary>
@@ -206,6 +210,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void Die()
     {
+        // Instantiate particle on player
+        Instantiate(playerParticle, player.transform.position, Quaternion.identity);
+
         // Check for a new high score
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
