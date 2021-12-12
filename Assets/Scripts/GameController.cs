@@ -8,8 +8,7 @@ public class GameController : MonoBehaviour
     public GameObject prefabPlayer;
     public GameObject prefabBodyPiece;
     public GameObject prefabFood;
-    public static float marginOfError = 0.0005f;
-    public static float speed = 0.03f;
+    
     public static List<GameObject> bodyPieceObjects = new List<GameObject>();
     public static List<BodyController> bodyPieces = new List<BodyController>();
     public static bool moveLock = false;
@@ -17,7 +16,9 @@ public class GameController : MonoBehaviour
     public GameObject food;
     public GameObject gameHUD;
     public GameObject deathScreen;
-    public int score = 0;
+    public static float marginOfError = 0.0005f;
+    public static float speed = 0.03f;
+    public static int score = 0;
 
     /// <summary>
     /// Unity start function - ran on first frame
@@ -38,22 +39,19 @@ public class GameController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        //add 2 body pieces for testing purposes
+        //when the worm has no body add 2 body pieces 1 frame apart
         if(bodyPieces.Count == 0)
-        {
-            addBodyPiece();
-        }
+            AddBodyPiece();
         else if (bodyPieces.Count == 1)
-        {
-            addBodyPiece();
-        }
+            AddBodyPiece();
     }
 
     /// <summary>
     /// Adds a body piece to the worm
     /// </summary>
-    public void addBodyPiece()
+    public void AddBodyPiece()
     {
+        //checks if the worm has any body pieces
         if (bodyPieceObjects.Count == 0)
         {
             moveLock = true;
@@ -72,38 +70,50 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void AddBodyPieceHelper(Vector3 position, Vector3 velocity){
+    /// <summary>
+    /// helper function to create a new bodypiece and add it to the lists
+    /// </summary>
+    ///<param name="position">The position of the current tail</param>
+    ///<param name="velocity">The velocity of the current tail</param>
+    private void AddBodyPieceHelper(Vector3 position, Vector3 velocity)
+    {
+        
+        //set the spawn location 1 unit behind the current tail
         if (velocity.x > 0)
-            {
-                position.x = position.x - 1f;
-            }
-            else if (velocity.x < 0)
-            {
-                position.x = position.x + 1f;
-            }
-            else if (velocity.z > 0)
-            {
-                position.z = position.z - 1f;
-            }
-            else if (velocity.z < 0)
-            {
-                position.z = position.z + 1f;
-            }
-            
-            bodyPieceObjects.Add(Object.Instantiate(prefabBodyPiece, position, Quaternion.identity));
-            int bodyPieceNum = bodyPieceObjects.Count - 1;
-            bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
-            bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
-    }
-    public void respawnFood(){
-        food.transform.SetPositionAndRotation(SpawnLocation(), Quaternion.identity);
-    }
-    private Vector3 SpawnLocation(){
-        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-7, 6));
+            position.x = position.x - 1f;
+        else if (velocity.x < 0)
+            position.x = position.x + 1f;
+        else if (velocity.z > 0)
+            position.z = position.z - 1f;
+        else if (velocity.z < 0)
+            position.z = position.z + 1f;
+        
+        //create the object, store it in the bodypiece lists, then give it a number
+        bodyPieceObjects.Add(Object.Instantiate(prefabBodyPiece, position, Quaternion.identity));
+        int bodyPieceNum = bodyPieceObjects.Count - 1;
+        bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
+        bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
     }
 
     /// <summary>
-    /// Function ran when the player dies
+    /// function to move the food to a random new location on the board
+    /// </summary>
+    public void RespawnFood()
+    {
+        food.transform.SetPositionAndRotation(SpawnLocation(), Quaternion.identity);
+    }
+
+    /// <summary>
+    /// helper function to determine where the food should respawn
+    /// </summary>
+    /// <returns>Vector3 with random X and Y within bounds</returns> 
+    private Vector3 SpawnLocation()
+    {
+        return new Vector3(Random.Range(-12, 11), 0, Random.Range(-6, 5));
+    }
+
+    /// <summary>
+    /// Function to kill the player and end the game
     /// </summary>
     public void Die()
     {
