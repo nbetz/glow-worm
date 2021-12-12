@@ -18,12 +18,30 @@ public class PlayerController : MonoBehaviour
     private static int goUpWait = 0;
     private static int goDownWait = 0;
 
+    /// <summary>
+    /// Unity function that is ran anytime this object collides
+    /// with another collider
+    /// </summary>
+    /// <param name="collider"></param>
+    void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.tag == "Body" || collider.gameObject.tag == "Border")
+            FindObjectOfType<GameController>().Die();
+        Debug.Log("Trigger entered");
+    }
+
+    /// <summary>
+    /// Unity start function - ran on first frame
+    /// </summary>
     void Start()
     {
         //set fixedUpdate time to 100FPS
         Time.fixedDeltaTime = 0.01f;
     }
 
+    /// <summary>
+    /// Unity update function - ran every frame
+    /// </summary>
     void Update()
     {
         //run the coroutine for the direction we want to go if it wasn't already moving on that axis
@@ -118,7 +136,9 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-
+    /// <summary>
+    /// Unity fixed update function - ran set interval
+    /// </summary>
     private void FixedUpdate()
     {
         if (GameController.moveLock == false)

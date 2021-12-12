@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    // Instance variables
     public GameObject prefabPlayer;
     public GameObject prefabBodyPiece;
     public static float marginOfError = 0.0005f;
@@ -12,7 +13,12 @@ public class GameController : MonoBehaviour
     public static List<BodyController> bodyPieces = new List<BodyController>();
     public static bool moveLock = false;
     GameObject player;
-    // Start is called before the first frame update
+    public GameObject gameHUD;
+    public GameObject deathScreen;
+
+    /// <summary>
+    /// Unity start function - ran on first frame
+    /// </summary>
     void Start()
     {
         //create the player at 0,0,0
@@ -21,7 +27,9 @@ public class GameController : MonoBehaviour
         moveLock = false;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Unity update function - ran every frame
+    /// </summary>
     void Update()
     {
         //add 2 body pieces for testing purposes
@@ -34,6 +42,10 @@ public class GameController : MonoBehaviour
             addBodyPiece();
         }
     }
+
+    /// <summary>
+    /// Adds a body piece to the worm
+    /// </summary>
     public void addBodyPiece()
     {
         if (bodyPieceObjects.Count == 0)
@@ -92,5 +104,15 @@ public class GameController : MonoBehaviour
             bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
             moveLock = false;
         }
+    }
+
+    /// <summary>
+    /// Function ran when the player dies
+    /// </summary>
+    public void Die()
+    {
+        // Hide the game HUD and show the death screen
+        gameHUD.SetActive(false);
+        deathScreen.SetActive(true);
     }
 }
