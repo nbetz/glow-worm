@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311918, g: 0.3807398, b: 0.35872716, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -998,6 +998,10 @@ PrefabInstance:
       propertyPath: gameHUD
       value: 
       objectReference: {fileID: 1038267911}
+    - target: {fileID: -5366205810124454327, guid: 12f7a6be50bbcab488204e2e1c861dcf, type: 3}
+      propertyPath: prefabFood
+      value: 
+      objectReference: {fileID: 327333985665524541, guid: 9bedae4bae227be4793255d26cbd0f55, type: 3}
     - target: {fileID: -5366205810124454327, guid: 12f7a6be50bbcab488204e2e1c861dcf, type: 3}
       propertyPath: deathScreen
       value: 

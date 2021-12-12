@@ -25,9 +25,29 @@ public class PlayerController : MonoBehaviour
     /// <param name="collider"></param>
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.tag == "Body" || collider.gameObject.tag == "Border")
+        if (collider.gameObject.tag == "Border")
             FindObjectOfType<GameController>().Die();
-        Debug.Log("Trigger entered");
+        if(collider.gameObject.tag == "Food"){
+            FindObjectOfType<GameController>().addBodyPiece();
+            FindObjectOfType<GameController>().respawnFood();
+        }
+        if(collider.gameObject.tag == "Body"){
+            float colliderPositionX = collider.transform.position.x;
+            float colliderPositionZ = collider.transform.position.z;
+            float positionX = transform.position.x;
+            float positionZ = transform.position.z;
+            if(velocity.x > 0 &&  colliderPositionX > positionX){
+                FindObjectOfType<GameController>().Die();
+            }
+            else if(velocity.x < 0 && colliderPositionX < positionX){
+                FindObjectOfType<GameController>().Die();
+            }else if(velocity.z > 0 && colliderPositionZ > positionZ){
+                FindObjectOfType<GameController>().Die();
+            }else if(velocity.z < 0 && colliderPositionZ < positionZ){
+                FindObjectOfType<GameController>().Die();
+            }
+        }
+        Debug.Log("Trigger entered: " + collider.gameObject.tag.ToString());
     }
 
     /// <summary>
@@ -277,6 +297,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    
 
     //deprecated but too scared to delete incase we need to revert
     IEnumerator GoLeft()

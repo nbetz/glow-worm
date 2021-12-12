@@ -7,14 +7,17 @@ public class GameController : MonoBehaviour
     // Instance variables
     public GameObject prefabPlayer;
     public GameObject prefabBodyPiece;
+    public GameObject prefabFood;
     public static float marginOfError = 0.0005f;
     public static float speed = 0.03f;
     public static List<GameObject> bodyPieceObjects = new List<GameObject>();
     public static List<BodyController> bodyPieces = new List<BodyController>();
     public static bool moveLock = false;
     GameObject player;
+    public GameObject food;
     public GameObject gameHUD;
     public GameObject deathScreen;
+    public int score = 0;
 
     /// <summary>
     /// Unity start function - ran on first frame
@@ -25,6 +28,9 @@ public class GameController : MonoBehaviour
         moveLock = true;
         player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
         moveLock = false;
+
+        //create the player at 4,0,3
+        food = Object.Instantiate(prefabFood, new Vector3(4f, 0f, 3f), Quaternion.identity);
     }
 
     /// <summary>
@@ -52,48 +58,34 @@ public class GameController : MonoBehaviour
         {
             moveLock = true;
             Vector3 position = player.transform.position;
-            Vector3 priorVel = PlayerController.velocity;
-            if (PlayerController.velocity.x > 0)
-            {
-                position.x = position.x - 1f;
-            }
-            else if (PlayerController.velocity.x < 0)
-            {
-                position.x = position.x + 1f;
-            }
-            else if (PlayerController.velocity.z > 0)
-            {
-                position.z = position.z - 1f;
-            }
-            else if (PlayerController.velocity.z < 0)
-            {
-                position.z = position.z + 1f;
-            }
-
-            bodyPieceObjects.Add(Object.Instantiate(prefabBodyPiece, position, Quaternion.identity));
-            int bodyPieceNum = bodyPieceObjects.Count - 1;
-            bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
-            bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
+            Vector3 velocity = PlayerController.velocity;
+            AddBodyPieceHelper(position, velocity);
             moveLock = false;
         }
         else
         {
             moveLock = true;
             Vector3 position = bodyPieces[bodyPieces.Count - 1].transform.position;
-            Vector3 priorVel = bodyPieces[bodyPieces.Count - 1].velocity;
-            if (bodyPieces[bodyPieces.Count - 1].velocity.x > 0)
+            Vector3 velocity = bodyPieces[bodyPieces.Count - 1].velocity;
+            AddBodyPieceHelper(position, velocity);
+            moveLock = false;
+        }
+    }
+
+    private void AddBodyPieceHelper(Vector3 position, Vector3 velocity){
+        if (velocity.x > 0)
             {
                 position.x = position.x - 1f;
             }
-            else if (bodyPieces[bodyPieces.Count - 1].velocity.x < 0)
+            else if (velocity.x < 0)
             {
                 position.x = position.x + 1f;
             }
-            else if (bodyPieces[bodyPieces.Count - 1].velocity.z > 0)
+            else if (velocity.z > 0)
             {
                 position.z = position.z - 1f;
             }
-            else if (bodyPieces[bodyPieces.Count - 1].velocity.z < 0)
+            else if (velocity.z < 0)
             {
                 position.z = position.z + 1f;
             }
@@ -102,8 +94,12 @@ public class GameController : MonoBehaviour
             int bodyPieceNum = bodyPieceObjects.Count - 1;
             bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
             bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
-            moveLock = false;
-        }
+    }
+    public void respawnFood(){
+        food.transform.SetPositionAndRotation(SpawnLocation(), Quaternion.identity);
+    }
+    private Vector3 SpawnLocation(){
+        return new Vector3(Random.Range(-10, 10), 0, Random.Range(-7, 6));
     }
 
     /// <summary>
