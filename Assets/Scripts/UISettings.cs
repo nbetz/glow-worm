@@ -88,6 +88,8 @@ public class UISettings : MonoBehaviour
             wormMaterial.color = wormColorPicker.color;
             wormMaterial.SetColor("_EmissionColor", wormColorPicker.color);
             
+            Debug.Log(wormColorPicker.color);
+            
             // Save it to a string
             PlayerPrefs.SetString("WormColor", "#" + ColorUtility.ToHtmlStringRGB(wormColorPicker.color));
         }

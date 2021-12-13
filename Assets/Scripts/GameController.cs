@@ -30,6 +30,9 @@ public class GameController : MonoBehaviour
     public static bool respawnFood = false;
 
     public static bool snapToGrid = false;
+
+    private Coroutine glowFadeRoutine;
+    
     /// <summary>
     /// Unity start function - ran on first frame
     /// </summary>
@@ -41,6 +44,8 @@ public class GameController : MonoBehaviour
 
         //create the food at a random location
         food = Object.Instantiate(prefabFood, SpawnLocation(), Quaternion.identity);
+
+        
     }
 
     /// <summary>
@@ -60,9 +65,11 @@ public class GameController : MonoBehaviour
                 else if (bodyPieces.Count == 1){
                     AddBodyPiece();
                     moveLock = false;
+                    //StartCoroutine(GlowFade());
                 }
             }
         }
+        
     }
 
     void FixedUpdate() {
@@ -132,6 +139,9 @@ public class GameController : MonoBehaviour
             Vector3 velocity = bodyPieces[bodyPieces.Count - 1].velocity;
             AddBodyPieceHelper(position, velocity);
             //moveLock = false;
+            //StopAllCoroutines();
+            if (glowFadeRoutine == null)
+                glowFadeRoutine = StartCoroutine(GlowFade());
         }
     }
 
@@ -169,6 +179,11 @@ public class GameController : MonoBehaviour
         Vector3 spawnLocation = SpawnLocation();
         food.transform.SetPositionAndRotation(spawnLocation, Quaternion.identity);
         Instantiate(foodParticle, spawnLocation, Quaternion.identity);
+        
+        // Whenever we respawn the food, start the glow fade
+        StopCoroutine(glowFadeRoutine);
+        glowFadeRoutine = null;
+        StartCoroutine(GlowReset());
     }
 
     /// <summary>
@@ -203,6 +218,37 @@ public class GameController : MonoBehaviour
             }
         }
         return location;
+    }
+
+    private IEnumerator GlowFade()
+    {
+        //Debug.Log(bodyPieceObjects.Count);
+        //yield return new WaitForSeconds(2.0f);
+        
+        Debug.Log("Glow Fade");
+        
+        for (int i = bodyPieces.Count - 1; i >= 0; i--)
+        {
+            // Wait for 2 seconds to stop glow
+            yield return new WaitForSeconds(2.0f);
+            Debug.Log("Wait");
+            // Take the next body piece in the list and start its glow fade
+            bodyPieces[i].GlowFade();
+        }
+
+    }
+
+    private IEnumerator GlowReset()
+    {
+        for (int i = bodyPieces.Count - 1; i >= 0; i--)
+        {
+            // Wait for 2 seconds to stop glow
+            yield return new WaitForSeconds(0.1f);
+            Debug.Log("Wait");
+            // Take the next body piece in the list and start its glow fade
+            bodyPieces[i].GlowReset();
+        }
+        
     }
 
     /// <summary>

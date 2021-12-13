@@ -14,6 +14,13 @@ public class BodyController : MonoBehaviour
     public List<Vector3> lastVelocityQueue = new List<Vector3>();
     public int bodyPieceNum;
 
+    public Material material;
+
+    public Color defaultColor;
+
+    public bool coroutineRunning = false;
+    public bool reset;
+    
     /// <summary>
     /// Unity start function - ran on first frame after object creation
     /// </summary>
@@ -31,12 +38,105 @@ public class BodyController : MonoBehaviour
         spawnLocation = transform.position;
         //AlignToGrid();
         //spawnLocation2 = transform.position;
-        
+
         // //remove the gap between pieces by clipping into the piece in front
         // transform.Translate(velocity);  
+
+        material = GetComponentInChildren<Renderer>().material;
+        defaultColor = material.GetColor("_EmissionColor");
+        //Debug.Log("Previous color " + material.color.r + " , " + material.color.g + " , " + material.color.b);
+        //float randR = Random.Range(0, 255);
+        //float randG = Random.Range(0, 255);
+        //float randB = Random.Range(0, 255);
+        //material.SetColor("_EmissionColor", new Color(randR / 100, randG / 100, randB / 100, 1.0f));
+        //Debug.Log("New color " + material.color.r + " , " + material.color.g + " , " + material.color.b);
     }
 
+    public void GlowFade()
+    {
+        // Make sure we stop any other nonsense running
+        StopAllCoroutines();
+        // Get the current color
+        Color oldColor = material.GetColor("_EmissionColor");
+        StartCoroutine(DoAThingOverTime(oldColor, Color.black, 1.0f));
+    }
+
+    public void GlowReset()
+    {
+        // Make sure we stop any other nonsense running
+        StopAllCoroutines();
+        // Get the current color
+        Color oldColor = material.GetColor("_EmissionColor");
+        StartCoroutine(DoAThingOverTime(oldColor, defaultColor, 0.5f));
+    }
     
+    IEnumerator DoAThingOverTime(Color start, Color end, float duration)
+    {
+        for (float t=0f;t<duration;t+=Time.deltaTime) {
+            float normalizedTime = t/duration;
+            //right here, you can now use normalizedTime as the third parameter in any Lerp from start to end
+            material.SetColor("_EmissionColor", Color.Lerp(start, end, normalizedTime));
+            yield return null;
+        }
+        material.SetColor("_EmissionColor", end); //without this, the value will end at something like 0.9992367
+    }
+    // private IEnumerator GlowResetRoutine()
+    // {
+    //     while (coroutineRunning)
+    //         yield return null;
+    //     
+    //     Debug.Log("Reset coroutine");
+    //     coroutineRunning = true;
+    //     float setR = oldColor.r;
+    //     float setG = oldColor.g;
+    //     float setB = oldColor.b;
+    //     while (setR <= oldColor.r || setG <= oldColor.g || setB <= oldColor.b)
+    //     {
+    //         material.SetColor("_EmissionColor", new Color (setR, setG, setB));
+    //         setR += 0.1f;
+    //         setG += 0.1f;
+    //         setB += 0.1f;
+    //         yield return new WaitForSeconds(0.1f);
+    //         //Debug.Log("Previous color " + material.GetColor("_EmissionColor").r + " , " + material.GetColor("_EmissionColor").g + " , " + material.GetColor("_EmissionColor").b);
+    //     }
+    //
+    //     coroutineRunning = false;
+    //     yield return null;
+    // }
+    
+    
+
+    
+    // private IEnumerator GlowFadeRoutine()
+    // {
+    //     // Color tempColor1;
+    //     // Color savedWormColor;
+    //     // if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("WormColor"), out tempColor1))
+    //     //     savedWormColor = tempColor1;
+    //
+    //     while (coroutineRunning)
+    //         yield return null;
+    //
+    //     Debug.Log("Fade coroutine");
+    //     coroutineRunning = true;
+    //     oldColor = material.GetColor("_EmissionColor");
+    //     float setR = oldColor.r;
+    //     float setG = oldColor.g;
+    //     float setB = oldColor.b;
+    //     while (setR >= 0.0f || setG >= 0.0f || setB >= 0.0f)
+    //     {
+    //         material.SetColor("_EmissionColor", new Color (setR, setG, setB));
+    //         setR -= 0.1f;
+    //         setG -= 0.1f;
+    //         setB -= 0.1f;
+    //         yield return new WaitForSeconds(0.1f);
+    //         //Debug.Log("Previous color " + material.GetColor("_EmissionColor").r + " , " + material.GetColor("_EmissionColor").g + " , " + material.GetColor("_EmissionColor").b);
+    //     }
+    //
+    //     coroutineRunning = false;
+    //     yield return null;
+    // }    
+
     public void MoveBody(){
         bool snapped = false;
          //if its the first piece, check if it needs to rotate based upon the player itself
