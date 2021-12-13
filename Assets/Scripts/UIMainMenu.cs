@@ -20,6 +20,8 @@ public class UIMainMenu : MonoBehaviour
     private Color savedWormColor;
     private Color savedFoodColor;
 
+    public Animation animation;
+
     // Unit Testing Variables
     public bool quit = false;
     public int highScore;
@@ -50,9 +52,16 @@ public class UIMainMenu : MonoBehaviour
 
     public void ClickPlay()
     {
-        SceneManager.LoadScene("Game");
+        animation.Play("MainMenuClose");
+        //SceneManager.LoadScene("Game");
+        StartCoroutine(Delay());
     }
 
+    private IEnumerator Delay()
+    {
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene("Game");
+    }
     public void ClickSettings()
     {
         gameObject.SetActive(false);

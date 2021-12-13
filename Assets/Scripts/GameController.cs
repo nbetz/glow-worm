@@ -65,7 +65,9 @@ public class GameController : MonoBehaviour
                 else if (bodyPieces.Count == 1){
                     AddBodyPiece();
                     moveLock = false;
-                    //StartCoroutine(GlowFade());
+                    StartCoroutine(GlowReset());
+                   //if (glowFadeRoutine == null)
+                        //glowFadeRoutine = StartCoroutine(GlowFade());
                 }
             }
         }
@@ -140,8 +142,8 @@ public class GameController : MonoBehaviour
             AddBodyPieceHelper(position, velocity);
             //moveLock = false;
             //StopAllCoroutines();
-            if (glowFadeRoutine == null)
-                glowFadeRoutine = StartCoroutine(GlowFade());
+            //if (glowFadeRoutine == null)
+                //glowFadeRoutine = StartCoroutine(GlowFade());
         }
     }
 
@@ -169,6 +171,8 @@ public class GameController : MonoBehaviour
         bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
         bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
         bodyPieces[bodyPieceNum].spawnVelocity = velocity;
+        // Start the piece with a black, faded color to make the animation smoother
+       //bodyPieces[bodyPieceNum].material.SetColor("_EmissionColor", Color.black);
     }
 
     /// <summary>
@@ -181,7 +185,8 @@ public class GameController : MonoBehaviour
         Instantiate(foodParticle, spawnLocation, Quaternion.identity);
         
         // Whenever we respawn the food, start the glow fade
-        StopCoroutine(glowFadeRoutine);
+        if (glowFadeRoutine != null)
+            StopCoroutine(glowFadeRoutine);
         glowFadeRoutine = null;
         StartCoroutine(GlowReset());
     }
@@ -225,30 +230,34 @@ public class GameController : MonoBehaviour
         //Debug.Log(bodyPieceObjects.Count);
         //yield return new WaitForSeconds(2.0f);
         
-        Debug.Log("Glow Fade");
+        //Debug.Log("Glow Fade");
         
         for (int i = bodyPieces.Count - 1; i >= 0; i--)
         {
             // Wait for 2 seconds to stop glow
             yield return new WaitForSeconds(2.0f);
-            Debug.Log("Wait");
+            //Debug.Log("Wait");
             // Take the next body piece in the list and start its glow fade
             bodyPieces[i].GlowFade();
         }
 
     }
-
+    
     private IEnumerator GlowReset()
     {
-        for (int i = bodyPieces.Count - 1; i >= 0; i--)
+        for (int i = 0; i <= bodyPieces.Count - 1; i++)
         {
             // Wait for 2 seconds to stop glow
             yield return new WaitForSeconds(0.1f);
-            Debug.Log("Wait");
+            //Debug.Log("Wait");
             // Take the next body piece in the list and start its glow fade
             bodyPieces[i].GlowReset();
         }
-        
+
+        // Wait for 2 seconds, then start the glow fade
+        yield return new WaitForSeconds(2.0f);
+        if (glowFadeRoutine == null)
+            glowFadeRoutine = StartCoroutine(GlowFade());
     }
 
     /// <summary>

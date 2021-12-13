@@ -140,6 +140,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
+  spawnLocation: {x: 0, y: 0, z: 0}
+  spawnLocation2: {x: 0, y: 0, z: 0}
+  spawnVelocity: {x: 0, y: 0, z: 0}
   lastRotatePositionQueue: []
   lastVelocityQueue: []
   bodyPieceNum: 0
+  material: {fileID: 0}
+  defaultColor: {r: 0, g: 0, b: 0, a: 0}
+  coroutineRunning: 0
+  reset: 0

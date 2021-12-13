@@ -9,10 +9,7 @@ using UnityEngine.UI;
 public class UISettings : MonoBehaviour
 {
     public GameObject mainMenuCanvas;
-    public TMP_Dropdown resolutionDropdown;
 
-    private Resolution[] resolutions;
-    
     // Color variables
     public FlexibleColorPicker wormColorPicker;
     public FlexibleColorPicker foodColorPicker;
@@ -33,26 +30,6 @@ public class UISettings : MonoBehaviour
     /// </summary>
     void Start()
     {
-        // Resolution
-        resolutions = Screen.resolutions;
-
-        resolutionDropdown.ClearOptions();
-
-        List<string> options = new List<string>();
-
-        int currentResolutionIndex = 0;
-        for (int i = 0; i < resolutions.Length; i++)
-        {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
-            options.Add(option);
-
-            if (resolutions[i].width == Screen.currentResolution.width && resolutions[i].height == Screen.currentResolution.height)
-                currentResolutionIndex = i;
-        }
-        resolutionDropdown.AddOptions(options);
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
-        
         // Color - get the saved colors
         Color tempColor1;
         Color tempColor2;
@@ -60,10 +37,6 @@ public class UISettings : MonoBehaviour
             savedWormColor = tempColor1;
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("FoodColor"), out tempColor2))
             savedFoodColor = tempColor2;
-
-        // Set the color picker colors to the saved colors
-        wormColorPicker.color = savedWormColor;
-        foodColorPicker.color = savedFoodColor;
 
         // Set the current color images to the saved colors
         currentWormColor.color = savedWormColor;
@@ -73,7 +46,13 @@ public class UISettings : MonoBehaviour
         wormMaterial.color = savedWormColor;
         foodMaterial.color = savedFoodColor;
         
-        
+        // Set the color picker colors to the saved colors
+        wormColorPicker.color = savedWormColor;
+        foodColorPicker.color = savedFoodColor;
+
+        wormColorPicker.startingColor = savedWormColor;
+        foodColorPicker.startingColor = savedFoodColor;
+
     }
 
     /// <summary>
@@ -87,9 +66,7 @@ public class UISettings : MonoBehaviour
             // Update the worm material color
             wormMaterial.color = wormColorPicker.color;
             wormMaterial.SetColor("_EmissionColor", wormColorPicker.color);
-            
-            Debug.Log(wormColorPicker.color);
-            
+
             // Save it to a string
             PlayerPrefs.SetString("WormColor", "#" + ColorUtility.ToHtmlStringRGB(wormColorPicker.color));
         }
@@ -133,26 +110,5 @@ public class UISettings : MonoBehaviour
         SceneManager.LoadScene("MainMenu");
 
     }
-
-    /// <summary>
-    /// Function to switch fullscreen modes 
-    /// </summary>
-    /// <param name="isFullscreen"></param>
-    public void SetFullscreen(bool isFullscreen)
-    {
-        //Screen.fullScreen = isFullscreen;
-    }
-
-    /// <summary>
-    /// Function to switch the resolution to the selected one
-    /// on the dropdown
-    /// </summary>
-    /// <param name="resolutionIndex"></param>
-    public void SetResolution(int resolutionIndex)
-    {
-        //Resolution resolution = resolutions[resolutionIndex];
-        //Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-    }
-
 
 }

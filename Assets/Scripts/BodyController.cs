@@ -44,6 +44,7 @@ public class BodyController : MonoBehaviour
 
         material = GetComponentInChildren<Renderer>().material;
         defaultColor = material.GetColor("_EmissionColor");
+        material.SetColor("_EmissionColor", Color.black);
         //Debug.Log("Previous color " + material.color.r + " , " + material.color.g + " , " + material.color.b);
         //float randR = Random.Range(0, 255);
         //float randG = Random.Range(0, 255);
@@ -58,7 +59,7 @@ public class BodyController : MonoBehaviour
         StopAllCoroutines();
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
-        StartCoroutine(DoAThingOverTime(oldColor, Color.black, 1.0f));
+        StartCoroutine(ColorFade(oldColor, Color.black, 1.0f));
     }
 
     public void GlowReset()
@@ -67,10 +68,10 @@ public class BodyController : MonoBehaviour
         StopAllCoroutines();
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
-        StartCoroutine(DoAThingOverTime(oldColor, defaultColor, 0.5f));
+        StartCoroutine(ColorFade(oldColor, defaultColor, 0.25f));
     }
     
-    IEnumerator DoAThingOverTime(Color start, Color end, float duration)
+    IEnumerator ColorFade(Color start, Color end, float duration)
     {
         for (float t=0f;t<duration;t+=Time.deltaTime) {
             float normalizedTime = t/duration;
