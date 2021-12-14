@@ -30,6 +30,8 @@ public class GameController : MonoBehaviour
     public static bool respawnFood = false;
 
     public static bool snapToGrid = false;
+
+    public static int currentGlowFade = 0;
     
     /// <summary>
     /// Unity start function - ran on first frame
@@ -237,6 +239,7 @@ public class GameController : MonoBehaviour
     {   
         for (int i = bodyPieces.Count - 1; i >= 0; i--)
         {
+            currentGlowFade = i;
             StopCoroutine(GlowReset());
             // Wait for 1 second to stop glow
             yield return new WaitForSeconds(1.0f);
@@ -253,7 +256,7 @@ public class GameController : MonoBehaviour
     private IEnumerator GlowReset()
     {
         StopCoroutine(GlowFade());
-        for (int i = 0; i <= bodyPieces.Count - 1; i++)
+        for (int i = currentGlowFade; i <= bodyPieces.Count - 1; i++)
         {
             // Wait for .1 seconds to stop glow
             yield return new WaitForSeconds(0.1f);
@@ -287,6 +290,7 @@ public class GameController : MonoBehaviour
         deathScreen.SetActive(deathScreenActive);
         
         // Destroy / reset game objects
+        StopAllCoroutines();
         foreach(GameObject b in bodyPieceObjects) 
             Destroy(b);
         bodyPieceObjects.Clear();
@@ -305,5 +309,6 @@ public class GameController : MonoBehaviour
         respawnFood = false;
         snapToGrid = false;
         speed = 0.03f;   
+        currentGlowFade = 0;
     }
 }
