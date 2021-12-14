@@ -30,8 +30,6 @@ public class GameController : MonoBehaviour
     public static bool respawnFood = false;
 
     public static bool snapToGrid = false;
-
-    private Coroutine glowFadeRoutine;
     
     /// <summary>
     /// Unity start function - ran on first frame
@@ -192,9 +190,8 @@ public class GameController : MonoBehaviour
         Instantiate(foodParticle, spawnLocation, Quaternion.identity);
         
         // Whenever we respawn the food, start the glow fade
-        if (glowFadeRoutine != null)
-            StopCoroutine(glowFadeRoutine);
-        glowFadeRoutine = null;
+
+        StopAllCoroutines();
         StartCoroutine(GlowReset());
     }
 
@@ -213,8 +210,6 @@ public class GameController : MonoBehaviour
         //check if the head of the worm is where the randomly generated location is
         if((location.x == Mathf.Floor(headPosition.x) || location.x == Mathf.Ceil(headPosition.x)) &&
         (location.z == Mathf.Floor(headPosition.z) || location.z == Mathf.Ceil(headPosition.z))){
-            Debug.Log("retrying after attempting to place inside head at position X: " 
-             + location.x + " Z: " + location.z);
             
             //retry if worm is at location
             return SpawnLocation();
@@ -225,8 +220,6 @@ public class GameController : MonoBehaviour
             Vector3 temp = bodyPieces[i].transform.position;
             if((location.x == Mathf.Floor(temp.x) || location.x == Mathf.Ceil(temp.x)) &&
             (location.z == Mathf.Floor(temp.z) || location.z == Mathf.Ceil(temp.z))){
-                Debug.Log("retrying after attempting to place inside bodypiece " +
-                 i + "at position X: " + location.x + " Z: " + location.z);
                 
                 //retry if worm is at location
                 return SpawnLocation();
@@ -244,8 +237,9 @@ public class GameController : MonoBehaviour
     {   
         for (int i = bodyPieces.Count - 1; i >= 0; i--)
         {
-            // Wait for 2 seconds to stop glow
-            yield return new WaitForSeconds(2.0f);
+            StopCoroutine(GlowReset());
+            // Wait for 1 second to stop glow
+            yield return new WaitForSeconds(1.0f);
 
             // Take the next body piece in the list and start its glow fade
             bodyPieces[i].GlowFade();
@@ -258,19 +252,19 @@ public class GameController : MonoBehaviour
     /// </summary>    
     private IEnumerator GlowReset()
     {
+        StopCoroutine(GlowFade());
         for (int i = 0; i <= bodyPieces.Count - 1; i++)
         {
-            // Wait for 2 seconds to stop glow
+            // Wait for .1 seconds to stop glow
             yield return new WaitForSeconds(0.1f);
-            //Debug.Log("Wait");
+
             // Take the next body piece in the list and start its glow fade
             bodyPieces[i].GlowReset();
         }
 
-        // Wait for 2 seconds, then start the glow fade
-        yield return new WaitForSeconds(2.0f);
-        if (glowFadeRoutine == null)
-            glowFadeRoutine = StartCoroutine(GlowFade());
+        // Wait for 1 second, then start the glow fade
+        yield return new WaitForSeconds(1.0f);
+        StartCoroutine(GlowFade());
     }
 
     /// <summary>

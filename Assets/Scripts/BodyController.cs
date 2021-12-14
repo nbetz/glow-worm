@@ -161,9 +161,8 @@ public class BodyController : MonoBehaviour
             }
         }
 
-        //move the body every FixedUpdate frame if movelock and snapped are false
-        if (GameController.moveLock == false && snapped == false){
+        //move the body every FixedUpdate frame if snapped is false
+        if (snapped == false)
             transform.Translate(velocity);
-        }
     }
 }

@@ -138,141 +138,130 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void MovePlayer(){
         bool snapped = false;
-        if (GameController.moveLock == false)
+
+        if(goUp == true)
         {
-            if(goUp == true)
+            //check if the head is at a grid position within MoE then turn upwards
+            if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
+                && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
-                //check if the head is at a grid position within MoE then turn upwards
-                if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                    && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                {
-                    GameController.moveLock = true;
 
-                    //change the velocity so the direction changes
-                    velocity.x = 0;
-                    velocity.z = GameController.speed;
+                //change the velocity so the direction changes
+                velocity.x = 0;
+                velocity.z = GameController.speed;
 
-                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
-                    GameController.snapToGrid = true;
-                    snapped = true;
+                //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
+                GameController.snapToGrid = true;
+                snapped = true;
                     
-                    //add the velocity and rounded position to the lastRotatePositionQueue
-                    lastRotatePositionQueue.Add(AlignToGrid());
-                    lastVelocityQueue.Add(velocity);
+                //add the velocity and rounded position to the lastRotatePositionQueue
+                lastRotatePositionQueue.Add(AlignToGrid());
+                lastVelocityQueue.Add(velocity);
 
-                    GameController.moveLock = false;
-                    goUp = false;
-                }
+                goUp = false;
             }
-            else if(goDown == true)
+        }
+        else if(goDown == true)
+        {
+            //check if the head is at a grid position within MoE then turn downwards
+            if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
+                && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
-                //check if the head is at a grid position within MoE then turn downwards
-                if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                    && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                {
-                    GameController.moveLock = true;
+                //change the velocity so the direction changes
+                velocity.x = 0;
+                velocity.z = -GameController.speed;
 
-                    //change the velocity so the direction changes
-                    velocity.x = 0;
-                    velocity.z = -GameController.speed;
+                //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
+                GameController.snapToGrid = true;
+                snapped = true;
 
-                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
-                    GameController.snapToGrid = true;
-                    snapped = true;
+                //add the velocity and rounded position to the lastRotatePositionQueue
+                lastRotatePositionQueue.Add(AlignToGrid());
+                lastVelocityQueue.Add(velocity);
 
-                    //add the velocity and rounded position to the lastRotatePositionQueue
-                    lastRotatePositionQueue.Add(AlignToGrid());
-                    lastVelocityQueue.Add(velocity);
-
-                    GameController.moveLock = false;
-                    goDown = false;
-                }
+                goDown = false;
             }
-            else if(goLeft == true)
+        }
+        else if(goLeft == true)
+        {
+            //check if the head is at a grid position within MoE then turn left
+            if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
+                && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
-                //check if the head is at a grid position within MoE then turn left
-                if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                    && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                {
-                    GameController.moveLock = true;
-                    //change the velocity so the direction changes
-                    velocity.z = 0;
-                    velocity.x = -GameController.speed;
+                //change the velocity so the direction changes
+                velocity.z = 0;
+                velocity.x = -GameController.speed;
 
-                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
-                    GameController.snapToGrid = true;
-                    snapped = true;
+                //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
+                GameController.snapToGrid = true;
+                snapped = true;
 
-                    //add the velocity and rounded position to the lastRotatePositionQueue
-                    lastRotatePositionQueue.Add(AlignToGrid());
-                    lastVelocityQueue.Add(velocity);
+                //add the velocity and rounded position to the lastRotatePositionQueue
+                lastRotatePositionQueue.Add(AlignToGrid());
+                lastVelocityQueue.Add(velocity);
 
-                    GameController.moveLock = false;
-                    goLeft = false;
-                }
+                goLeft = false;
             }
-            else if(goRight == true)
+        }
+        else if(goRight == true)
+        {
+            //check if the head is at a grid position within MoE then turn right
+            if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
+                && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
-                //check if the head is at a grid position within MoE then turn right
-                if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                    && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                {
-                    GameController.moveLock = true;
-                    //change the velocity so the direction changes
-                    velocity.z = 0;
-                    velocity.x = GameController.speed;
+                //change the velocity so the direction changes
+                velocity.z = 0;
+                velocity.x = GameController.speed;
 
-                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
-                    GameController.snapToGrid = true;
-                    snapped = true;
+                //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
+                GameController.snapToGrid = true;
+                snapped = true;
                     
-                    //add the velocity and rounded position to the lastRotatePositionQueue
-                    lastRotatePositionQueue.Add(AlignToGrid());
-                    lastVelocityQueue.Add(velocity);
+                //add the velocity and rounded position to the lastRotatePositionQueue
+                lastRotatePositionQueue.Add(AlignToGrid());
+                lastVelocityQueue.Add(velocity);
 
-                    GameController.moveLock = false;
-                    goRight = false;
-                }
+                goRight = false;
             }
+        }
 
-            //move the head every fixed update frame
-            if (GameController.moveLock == false && snapped == false)
-                transform.Translate(velocity);
+        //move the head
+        if (snapped == false)
+            transform.Translate(velocity);
 
-            //skip the number of frames needed before moving
-            //the player in the direction they want on the next frame 
-            if(goUpWait == 2)
-                goUpWait--;
-            else if (goDownWait == 2)
-                goDownWait--;
-            else if (goLeftWait == 2)
-                goLeftWait--;
-            else if (goRightWait == 2)
-                goRightWait--;
-            else if (goUpWait == 1)
-            {
-                goUpWait--;
-                goUp = true;
-                waiting = false;
-            }
-            else if (goDownWait == 1)
-            {
-                goDownWait--;
-                goDown = true;
-                waiting = false;
-            }
-            else if (goLeftWait == 1)
-            {
-                goLeftWait--;
-                goLeft = true;
-                waiting = false;
-            }
-            else if (goRightWait == 1)
-            {
-                goRightWait--;
-                goRight = true;
-                waiting = false;
-            }
+        //skip the number of frames needed before moving
+        //the player in the direction they want on the next frame 
+        if(goUpWait == 2)
+            goUpWait--;
+        else if (goDownWait == 2)
+            goDownWait--;
+        else if (goLeftWait == 2)
+            goLeftWait--;
+        else if (goRightWait == 2)
+            goRightWait--;
+        else if (goUpWait == 1)
+        {
+            goUpWait--;
+            goUp = true;
+            waiting = false;
+        }
+        else if (goDownWait == 1)
+        {
+            goDownWait--;
+            goDown = true;
+            waiting = false;
+        }
+        else if (goLeftWait == 1)
+        {
+            goLeftWait--;
+            goLeft = true;
+            waiting = false;
+        }
+        else if (goRightWait == 1)
+        {
+            goRightWait--;
+            goRight = true;
+            waiting = false;
         }
     }
     
