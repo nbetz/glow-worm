@@ -38,6 +38,10 @@ public class PlayerController : MonoBehaviour
             GameController.respawnFood = true;
             GameController.updateSpeed = true;
             GameController.score += 10;
+
+            //win condition
+            if(GameController.score >= 3210)
+                FindObjectOfType<GameController>().Win();
         }
 
         //ends the game if the worm touches a body piece in the direction its moving
@@ -269,7 +273,6 @@ public class PlayerController : MonoBehaviour
     /// Helper method to align the body piece to the grid
     /// </summary>
     /// <returns>Vector3 of the players position but rounded to the nearest integer</returns> 
-
     private Vector3 AlignToGrid()
     {
         //attempt to get it aligned better by rounding the position then setting it to the rounded version

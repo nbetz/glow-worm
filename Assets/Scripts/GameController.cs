@@ -19,10 +19,10 @@ public class GameController : MonoBehaviour
     public GameObject foodParticle;
     public GameObject playerParticle;
 
-    public bool deathScreenActive = false;
+    public bool endScreenActive = false;
     public static float marginOfError = 0.0005f;
     public static float speed = 0.03f;
-    public static int score = 0;
+    public static int score = 3200;
 
     public static bool addBodyPiece = false;
     public static bool updateSpeed = false;
@@ -53,7 +53,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        if(!deathScreenActive){
+        if(!endScreenActive){
             if(player == null){
             player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
             food = Object.Instantiate(prefabFood, new Vector3(4f, 0f, 3f), Quaternion.identity);
@@ -76,7 +76,7 @@ public class GameController : MonoBehaviour
     /// Unity FixedUpdate function - ran 100 frames per second
     /// </summary>
     void FixedUpdate() {
-        if(!deathScreenActive){
+        if(!endScreenActive){
 
             //move the worm
             MoveWorm();
@@ -283,12 +283,47 @@ public class GameController : MonoBehaviour
             PlayerPrefs.SetInt("HighScore", score);
         
         PlayerPrefs.SetInt("PrevScore", score);
+        deathScreen.GetComponent<UIDeathScreen>().titleTextString = "GAME OVER!";
+        deathScreen.GetComponent<UIDeathScreen>().backgroundColor = new Color (0.368f, 0f, 0f, 0f);
+        deathScreen.GetComponent<UIDeathScreen>().Activate();
         
         // Hide the game HUD and show the death screen
-        deathScreenActive = true;
+        endScreenActive = true;
         gameHUD.SetActive(false);
-        deathScreen.SetActive(deathScreenActive);
+        deathScreen.SetActive(endScreenActive);
         
+        // Destroy / reset game objects
+        Reset();
+    }
+
+    /// <summary>
+    /// Function to end the game and tell the player they've won
+    /// </summary>
+    public void Win()
+    {
+        // Check for a new high score
+        if (score > PlayerPrefs.GetInt("HighScore"))
+            PlayerPrefs.SetInt("HighScore", score);
+        
+        PlayerPrefs.SetInt("PrevScore", score);
+        deathScreen.GetComponent<UIDeathScreen>().titleTextString = "YOU WIN!";
+        deathScreen.GetComponent<UIDeathScreen>().backgroundColor = new Color (0.368f, 0.368f, 0.368f, 0f);
+        deathScreen.GetComponent<UIDeathScreen>().Activate();
+
+        // Hide the game HUD and show the death screen
+        endScreenActive = true;
+        gameHUD.SetActive(false);
+        deathScreen.SetActive(endScreenActive);
+        
+        // Destroy / reset game objects
+        Reset();
+    }
+
+    /// <summary>
+    /// Function to reset all the variables in GameController
+    /// </summary>
+    public void Reset()
+    {        
         // Destroy / reset game objects
         StopAllCoroutines();
         foreach(GameObject b in bodyPieceObjects) 
