@@ -34,13 +34,10 @@ public class PlayerController : MonoBehaviour
         //adds a body piece and moves the food if the worm touches the food    
         if(collider.gameObject.tag == "Food")
         {
-            //FindObjectOfType<GameController>().AddBodyPiece();
             GameController.addBodyPiece = true;
-            //FindObjectOfType<GameController>().RespawnFood();
             GameController.respawnFood = true;
             GameController.updateSpeed = true;
             GameController.score += 10;
-            //Instantiate(foodPickupParticle, new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.identity);
         }
 
         //ends the game if the worm touches a body piece in the direction its moving
@@ -71,6 +68,7 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>
     /// Unity update function - ran every frame
+    /// handles player input and queues up a rotation if an input was given
     /// </summary>
     void Update()
     {
@@ -135,6 +133,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// moves the head in whatever direction it needs to move
+    /// </summary>
     public void MovePlayer(){
         bool snapped = false;
         if (GameController.moveLock == false)
@@ -151,17 +152,12 @@ public class PlayerController : MonoBehaviour
                     velocity.x = 0;
                     velocity.z = GameController.speed;
 
-                    //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    //AlignToGrid();
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
                     
-                    Vector3 temp = new Vector3(0, 0, 0);
-                    temp.x = Mathf.Round(transform.position.x);
-                    temp.z = Mathf.Round(transform.position.z);
-                    
-                    lastRotatePositionQueue.Add(temp);
+                    //add the velocity and rounded position to the lastRotatePositionQueue
+                    lastRotatePositionQueue.Add(AlignToGrid());
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -180,17 +176,12 @@ public class PlayerController : MonoBehaviour
                     velocity.x = 0;
                     velocity.z = -GameController.speed;
 
-                    //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    //AlignToGrid();
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
 
-                    Vector3 temp = new Vector3(0, 0, 0);
-                    temp.x = Mathf.Round(transform.position.x);
-                    temp.z = Mathf.Round(transform.position.z);
-                    
-                    lastRotatePositionQueue.Add(temp);
+                    //add the velocity and rounded position to the lastRotatePositionQueue
+                    lastRotatePositionQueue.Add(AlignToGrid());
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -208,17 +199,12 @@ public class PlayerController : MonoBehaviour
                     velocity.z = 0;
                     velocity.x = -GameController.speed;
 
-                    //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    //AlignToGrid();
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
 
-                    Vector3 temp = new Vector3(0, 0, 0);
-                    temp.x = Mathf.Round(transform.position.x);
-                    temp.z = Mathf.Round(transform.position.z);
-                    
-                    lastRotatePositionQueue.Add(temp);
+                    //add the velocity and rounded position to the lastRotatePositionQueue
+                    lastRotatePositionQueue.Add(AlignToGrid());
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -236,17 +222,12 @@ public class PlayerController : MonoBehaviour
                     velocity.z = 0;
                     velocity.x = GameController.speed;
 
-                    //try to round the position to be exactly a whole number then save it in lastRotatePosition
-                    //AlignToGrid();
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
                     
-                    Vector3 temp = new Vector3(0, 0, 0);
-                    temp.x = Mathf.Round(transform.position.x);
-                    temp.z = Mathf.Round(transform.position.z);
-                    
-                    lastRotatePositionQueue.Add(temp);
+                    //add the velocity and rounded position to the lastRotatePositionQueue
+                    lastRotatePositionQueue.Add(AlignToGrid());
                     lastVelocityQueue.Add(velocity);
 
                     GameController.moveLock = false;
@@ -298,12 +279,14 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// Helper method to align the body piece to the grid
     /// </summary>
-    private void AlignToGrid()
+    /// <returns>Vector3 of the players position but rounded to the nearest integer</returns> 
+
+    private Vector3 AlignToGrid()
     {
         //attempt to get it aligned better by rounding the position then setting it to the rounded version
         Vector3 temp = new Vector3(0, 0, 0);
         temp.x = Mathf.Round(transform.position.x);
         temp.z = Mathf.Round(transform.position.z);
-        transform.position = temp;
+        return temp;
     }
 }

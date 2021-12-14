@@ -6,10 +6,6 @@ public class BodyController : MonoBehaviour
     //Instance variables
     public Vector3 velocity;
 
-    public Vector3 spawnLocation;
-    public Vector3 spawnLocation2;
-    public Vector3 spawnVelocity;
-
     public List<Vector3> lastRotatePositionQueue = new List<Vector3>();
     public List<Vector3> lastVelocityQueue = new List<Vector3>();
     public int bodyPieceNum;
@@ -35,24 +31,15 @@ public class BodyController : MonoBehaviour
         else
             velocity = GameController.bodyPieces[bodyPieceNum - 1].velocity;
 
-        spawnLocation = transform.position;
-        //AlignToGrid();
-        //spawnLocation2 = transform.position;
-
-        // //remove the gap between pieces by clipping into the piece in front
-        // transform.Translate(velocity);  
-
+        //create the body color on object creation
         material = GetComponentInChildren<Renderer>().material;
         defaultColor = material.GetColor("_EmissionColor");
         material.SetColor("_EmissionColor", Color.black);
-        //Debug.Log("Previous color " + material.color.r + " , " + material.color.g + " , " + material.color.b);
-        //float randR = Random.Range(0, 255);
-        //float randG = Random.Range(0, 255);
-        //float randB = Random.Range(0, 255);
-        //material.SetColor("_EmissionColor", new Color(randR / 100, randG / 100, randB / 100, 1.0f));
-        //Debug.Log("New color " + material.color.r + " , " + material.color.g + " , " + material.color.b);
     }
 
+    /// <summary>
+    /// starts the colorfade coroutine to fade the color to black over 1 second
+    /// </summary>
     public void GlowFade()
     {
         // Make sure we stop any other nonsense running
@@ -62,6 +49,9 @@ public class BodyController : MonoBehaviour
         StartCoroutine(ColorFade(oldColor, Color.black, 1.0f));
     }
 
+    /// <summary>
+    /// starts the colorfade coroutine to reset the color to the starting color over .25 seconds
+    /// </summary>
     public void GlowReset()
     {
         // Make sure we stop any other nonsense running
@@ -70,7 +60,14 @@ public class BodyController : MonoBehaviour
         Color oldColor = material.GetColor("_EmissionColor");
         StartCoroutine(ColorFade(oldColor, defaultColor, 0.25f));
     }
-    
+
+    /// <summary>
+    /// coroutine to lerp from a start color to an end color over a set time. Changes the
+    /// emission color of a body piece.
+    /// </summary>  
+    ///<param name="start">The starting color</param>
+    ///<param name="end">The color to end on</param>
+    ///<param name="duration">The time to go from the start color to the end color</param>  
     IEnumerator ColorFade(Color start, Color end, float duration)
     {
         for (float t=0f;t<duration;t+=Time.deltaTime) {
@@ -81,63 +78,10 @@ public class BodyController : MonoBehaviour
         }
         material.SetColor("_EmissionColor", end); //without this, the value will end at something like 0.9992367
     }
-    // private IEnumerator GlowResetRoutine()
-    // {
-    //     while (coroutineRunning)
-    //         yield return null;
-    //     
-    //     Debug.Log("Reset coroutine");
-    //     coroutineRunning = true;
-    //     float setR = oldColor.r;
-    //     float setG = oldColor.g;
-    //     float setB = oldColor.b;
-    //     while (setR <= oldColor.r || setG <= oldColor.g || setB <= oldColor.b)
-    //     {
-    //         material.SetColor("_EmissionColor", new Color (setR, setG, setB));
-    //         setR += 0.1f;
-    //         setG += 0.1f;
-    //         setB += 0.1f;
-    //         yield return new WaitForSeconds(0.1f);
-    //         //Debug.Log("Previous color " + material.GetColor("_EmissionColor").r + " , " + material.GetColor("_EmissionColor").g + " , " + material.GetColor("_EmissionColor").b);
-    //     }
-    //
-    //     coroutineRunning = false;
-    //     yield return null;
-    // }
-    
-    
 
-    
-    // private IEnumerator GlowFadeRoutine()
-    // {
-    //     // Color tempColor1;
-    //     // Color savedWormColor;
-    //     // if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("WormColor"), out tempColor1))
-    //     //     savedWormColor = tempColor1;
-    //
-    //     while (coroutineRunning)
-    //         yield return null;
-    //
-    //     Debug.Log("Fade coroutine");
-    //     coroutineRunning = true;
-    //     oldColor = material.GetColor("_EmissionColor");
-    //     float setR = oldColor.r;
-    //     float setG = oldColor.g;
-    //     float setB = oldColor.b;
-    //     while (setR >= 0.0f || setG >= 0.0f || setB >= 0.0f)
-    //     {
-    //         material.SetColor("_EmissionColor", new Color (setR, setG, setB));
-    //         setR -= 0.1f;
-    //         setG -= 0.1f;
-    //         setB -= 0.1f;
-    //         yield return new WaitForSeconds(0.1f);
-    //         //Debug.Log("Previous color " + material.GetColor("_EmissionColor").r + " , " + material.GetColor("_EmissionColor").g + " , " + material.GetColor("_EmissionColor").b);
-    //     }
-    //
-    //     coroutineRunning = false;
-    //     yield return null;
-    // }    
-
+    /// <summary>
+    /// moves the body piece in whatever direction it needs to move
+    /// </summary>
     public void MoveBody(){
         bool snapped = false;
          //if its the first piece, check if it needs to rotate based upon the player itself
@@ -156,10 +100,8 @@ public class BodyController : MonoBehaviour
                     (transform.position.z <= lastRotatePosition.z + GameController.speed && 
                     transform.position.z >= lastRotatePosition.z - GameController.marginOfError))
                 {
-                    //GameController.moveLock = true;
 
-                    //alligns the body piece to the grid
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
 
@@ -169,7 +111,6 @@ public class BodyController : MonoBehaviour
                     lastVelocityQueue.Add(lastVelocity);
                     PlayerController.lastRotatePositionQueue.RemoveAt(0);
                     PlayerController.lastVelocityQueue.RemoveAt(0);
-                    //GameController.moveLock = false;
                 }
             }
         }
@@ -189,10 +130,7 @@ public class BodyController : MonoBehaviour
                     (transform.position.z <= lastRotatePosition.z + GameController.speed && 
                     transform.position.z >= lastRotatePosition.z - GameController.marginOfError))
                 {
-                    //GameController.moveLock = true;
-
-                    //aligns the body piece to the grid
-                    //FindObjectOfType<GameController>().AlignAll();
+                    //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                     GameController.snapToGrid = true;
                     snapped = true;
 
@@ -202,8 +140,6 @@ public class BodyController : MonoBehaviour
                     lastVelocityQueue.Add(lastVelocity);
                     GameController.bodyPieces[bodyPieceNum - 1].lastRotatePositionQueue.RemoveAt(0);
                     GameController.bodyPieces[bodyPieceNum - 1].lastVelocityQueue.RemoveAt(0);
-
-                    //GameController.moveLock = false;
                 }
             }
             
@@ -219,29 +155,15 @@ public class BodyController : MonoBehaviour
                 (transform.position.z >= lastRotatePositionQueue[0].z - 1 - GameController.speed * 2 &&
                 transform.position.z <= lastRotatePositionQueue[0].z - 1 + GameController.marginOfError)))
             {
-                
                 //remove the first rotation in the body pieces queue
                 lastRotatePositionQueue.RemoveAt(0);
                 lastVelocityQueue.RemoveAt(0);
             }
         }
 
-        //move the body every fixedupdate frame
+        //move the body every FixedUpdate frame if movelock and snapped are false
         if (GameController.moveLock == false && snapped == false){
             transform.Translate(velocity);
         }
-    }
-
-
-    /// <summary>
-    /// Helper method to align the body piece to the grid
-    /// </summary>
-    private void AlignToGrid()
-    {
-        //attempt to get it aligned better by rounding the position then setting it to the rounded version
-        Vector3 temp = new Vector3(0, 0, 0);
-        temp.x = Mathf.Round(transform.position.x);
-        temp.z = Mathf.Round(transform.position.z);
-        transform.position = temp;
     }
 }

@@ -66,29 +66,40 @@ public class GameController : MonoBehaviour
                     AddBodyPiece();
                     moveLock = false;
                     StartCoroutine(GlowReset());
-                   //if (glowFadeRoutine == null)
-                        //glowFadeRoutine = StartCoroutine(GlowFade());
                 }
             }
         }
         
     }
 
+    /// <summary>
+    /// Unity FixedUpdate function - ran 100 frames per second
+    /// </summary>
     void FixedUpdate() {
         if(!deathScreenActive){
+
+            //move the worm
             MoveWorm();
+
+            //add a body piece if necessary
             if(addBodyPiece == true){
                 AddBodyPiece();
                 addBodyPiece = false;          
             }
+
+            //snap the body to the grid if necessary
             if(snapToGrid == true){
                 AlignAll();
                 snapToGrid = false;
             }
+
+            //respawn the food if necessary
             if(respawnFood == true){
                 RespawnFood();
                 respawnFood = false;
             }
+
+            //update the difficulty if necessary
             if(updateSpeed == true){
                 speed += 0.0005f;
                 updateSpeed = false;
@@ -96,16 +107,23 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the entire worm if movelock is false
+    /// </summary>
     private void MoveWorm()
     {
-        FindObjectOfType<PlayerController>().MovePlayer();
-        for(int i = 0; i < bodyPieces.Count; i++){
-            bodyPieces[i].MoveBody();
+        if(moveLock == false){
+            FindObjectOfType<PlayerController>().MovePlayer();
+            for(int i = 0; i < bodyPieces.Count; i++){
+                bodyPieces[i].MoveBody();
+            }
         }
     }
 
+    /// <summary>
+    /// Aligns the entire worm to the grid
+    /// </summary>
     public void AlignAll(){
-        moveLock = true;
         Vector3 temp = new Vector3(0, 0, 0);
         temp.x = Mathf.Round(player.transform.position.x);
         temp.z = Mathf.Round(player.transform.position.z);
@@ -117,7 +135,6 @@ public class GameController : MonoBehaviour
             temp2.z = Mathf.Round(bodyPieceObjects[i].transform.position.z);
             bodyPieceObjects[i].transform.position = temp2;            
         }
-        moveLock = false;
     }
 
     /// <summary>
@@ -128,22 +145,15 @@ public class GameController : MonoBehaviour
         //checks if the worm has any body pieces
         if (bodyPieceObjects.Count == 0)
         {
-            //moveLock = true;
             Vector3 position = player.transform.position;
             Vector3 velocity = PlayerController.velocity;
             AddBodyPieceHelper(position, velocity);
-            //moveLock = false;
         }
         else
         {
-            //moveLock = true;
             Vector3 position = bodyPieces[bodyPieces.Count - 1].transform.position;
             Vector3 velocity = bodyPieces[bodyPieces.Count - 1].velocity;
             AddBodyPieceHelper(position, velocity);
-            //moveLock = false;
-            //StopAllCoroutines();
-            //if (glowFadeRoutine == null)
-                //glowFadeRoutine = StartCoroutine(GlowFade());
         }
     }
 
@@ -170,9 +180,6 @@ public class GameController : MonoBehaviour
         int bodyPieceNum = bodyPieceObjects.Count - 1;
         bodyPieces.Add(bodyPieceObjects[bodyPieceNum].GetComponent<BodyController>());
         bodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
-        bodyPieces[bodyPieceNum].spawnVelocity = velocity;
-        // Start the piece with a black, faded color to make the animation smoother
-       //bodyPieces[bodyPieceNum].material.SetColor("_EmissionColor", Color.black);
     }
 
     /// <summary>
@@ -197,6 +204,9 @@ public class GameController : MonoBehaviour
     /// <returns>Vector3 with random X and Y within bounds</returns> 
     private Vector3 SpawnLocation()
     {
+        //suspend movement until the food has a new location
+        moveLock = true;
+
         Vector3 location = new Vector3(Random.Range(-12, 12), 0, Random.Range(-6, 6));
         Vector3 headPosition = player.transform.position;
 
@@ -222,27 +232,30 @@ public class GameController : MonoBehaviour
                 return SpawnLocation();
             }
         }
+
+        moveLock = false;
         return location;
     }
 
+    /// <summary>
+    /// coroutine to fade the glow from the body of the worm
+    /// </summary>
     private IEnumerator GlowFade()
-    {
-        //Debug.Log(bodyPieceObjects.Count);
-        //yield return new WaitForSeconds(2.0f);
-        
-        //Debug.Log("Glow Fade");
-        
+    {   
         for (int i = bodyPieces.Count - 1; i >= 0; i--)
         {
             // Wait for 2 seconds to stop glow
             yield return new WaitForSeconds(2.0f);
-            //Debug.Log("Wait");
+
             // Take the next body piece in the list and start its glow fade
             bodyPieces[i].GlowFade();
         }
 
     }
-    
+
+    /// <summary>
+    /// coroutine to reset the glow for the worm
+    /// </summary>    
     private IEnumerator GlowReset()
     {
         for (int i = 0; i <= bodyPieces.Count - 1; i++)

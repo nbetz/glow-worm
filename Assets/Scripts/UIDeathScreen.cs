@@ -21,7 +21,6 @@ public class UIDeathScreen : MonoBehaviour
     public void Click_TryAgain()
     {
         // Reload the game scene
-        //SceneManager.LoadScene("Game");
         FindObjectOfType<GameController>().deathScreenActive = false;
         FindObjectOfType<GameController>().deathScreen.SetActive(false);
         FindObjectOfType<GameController>().gameHUD.SetActive(true);
