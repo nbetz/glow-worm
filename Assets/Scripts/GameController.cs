@@ -22,7 +22,7 @@ public class GameController : MonoBehaviour
     public bool endScreenActive = false;
     public static float marginOfError = 0.0005f;
     public static float speed = 0.03f;
-    public static int score = 3200;
+    public static int score = 0;
 
     public static bool addBodyPiece = false;
     public static bool updateSpeed = false;

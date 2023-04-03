@@ -10,7 +10,9 @@ public class FCP_ExampleScript : MonoBehaviour
     public Color externalColor;
     private Color internalColor;
 
+#pragma warning disable IDE0051 // Remove unused private members
     private void Start() {
+#pragma warning restore IDE0051 // Remove unused private members
         internalColor = externalColor;
     }
 

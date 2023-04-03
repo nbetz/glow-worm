@@ -14,6 +14,9 @@ public class BodyController : MonoBehaviour
 
     public Color defaultColor;
 
+    public Light light;
+    public GameObject cube;
+
     public bool coroutineRunning = false;
     public bool reset;
     
@@ -35,6 +38,8 @@ public class BodyController : MonoBehaviour
         material = GetComponentInChildren<Renderer>().material;
         defaultColor = material.GetColor("_EmissionColor");
         material.SetColor("_EmissionColor", Color.black);
+        light = GetComponentInChildren<Light>();
+        cube = this.gameObject.transform.GetChild(0).gameObject;
     }
 
     /// <summary>
@@ -46,7 +51,8 @@ public class BodyController : MonoBehaviour
         StopAllCoroutines();
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
-        StartCoroutine(ColorFade(oldColor, Color.black, 1.0f));
+        cube.layer = 0;
+        StartCoroutine(ColorFade(oldColor, Color.black, 0f, 0f, 0, 1.0f));
     }
 
     /// <summary>
@@ -58,7 +64,8 @@ public class BodyController : MonoBehaviour
         StopAllCoroutines();
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
-        StartCoroutine(ColorFade(oldColor, defaultColor, 0.25f));
+        StartCoroutine(ColorFade(oldColor, defaultColor, 0f, 1f, 6, 0.25f));
+        cube.layer = 6;
     }
 
     /// <summary>
@@ -68,14 +75,16 @@ public class BodyController : MonoBehaviour
     ///<param name="start">The starting color</param>
     ///<param name="end">The color to end on</param>
     ///<param name="duration">The time to go from the start color to the end color</param>  
-    IEnumerator ColorFade(Color start, Color end, float duration)
+    IEnumerator ColorFade(Color start, Color end, float startFloat, float endFloat, int layer, float duration)
     {
         for (float t=0f;t<duration;t+=Time.deltaTime) {
             float normalizedTime = t/duration;
             //right here, you can now use normalizedTime as the third parameter in any Lerp from start to end
             material.SetColor("_EmissionColor", Color.Lerp(start, end, normalizedTime));
+            light.intensity = Mathf.Lerp(startFloat, endFloat, normalizedTime);
             yield return null;
         }
+        cube.layer = layer;
         material.SetColor("_EmissionColor", end); //without this, the value will end at something like 0.9992367
     }
 

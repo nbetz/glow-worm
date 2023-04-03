@@ -22,6 +22,7 @@ public class UIDeathScreen : MonoBehaviour
     /// </summary>
     public void Activate()
     {
+
         scoreText.text = "SCORE: " + PlayerPrefs.GetInt("PrevScore");
         titleText.text = titleTextString;
         Background.color = backgroundColor;
