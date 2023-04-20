@@ -6,11 +6,15 @@ public class GameController : MonoBehaviour
 {
     // Instance variables
     public GameObject prefabPlayer;
+    public GameObject prefabEnemy;
+    public GameObject prefabEnemyBodyPiece;
     public GameObject prefabBodyPiece;
     public GameObject prefabFood;
     
     public static List<GameObject> bodyPieceObjects = new List<GameObject>();
     public static List<BodyController> bodyPieces = new List<BodyController>();
+    public static List<EnemyBodyController> enemyBodyPieces = new List<EnemyBodyController>();
+    public static List<GameObject> enemyBodyPieceObjects = new List<GameObject>();
     public static bool moveLock = false;
     public GameObject player;
     public GameObject food;
@@ -18,6 +22,7 @@ public class GameController : MonoBehaviour
     public GameObject deathScreen;
     public GameObject foodParticle;
     public GameObject playerParticle;
+    public GameObject enemy;
 
     public bool endScreenActive = false;
     public static float marginOfError = 0.0005f;
@@ -25,6 +30,7 @@ public class GameController : MonoBehaviour
     public static int score = 0;
 
     public static bool addBodyPiece = false;
+    public static bool addEnemyBodyPiece = false;
     public static bool updateSpeed = false;
 
     public static bool respawnFood = false;
@@ -32,6 +38,7 @@ public class GameController : MonoBehaviour
     public static bool snapToGrid = false;
 
     public static int currentGlowFade = 0;
+    public static int enemyCurrentGlowFade = 0;
     
     /// <summary>
     /// Unity start function - ran on first frame
@@ -41,6 +48,7 @@ public class GameController : MonoBehaviour
         //create the player at 0,0,0
         moveLock = true;
         player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
+        enemy = Object.Instantiate(prefabEnemy, new Vector3(5f, 0f, 5f), Quaternion.identity);
 
         //create the food at a random location
         food = Object.Instantiate(prefabFood, SpawnLocation(), Quaternion.identity);
@@ -57,8 +65,9 @@ public class GameController : MonoBehaviour
             if(player == null){
             player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
             food = Object.Instantiate(prefabFood, new Vector3(4f, 0f, 3f), Quaternion.identity);
-
-            }else{
+            enemy = Object.Instantiate(prefabEnemy, new Vector3(5f, 0f, 5f), Quaternion.identity);
+            }
+            else{
             //when the worm has no body add 2 body pieces 1 frame apart
                 if(bodyPieces.Count == 0)
                     AddBodyPiece();
@@ -66,6 +75,16 @@ public class GameController : MonoBehaviour
                     AddBodyPiece();
                     moveLock = false;
                     StartCoroutine(GlowReset());
+                }
+
+                if(enemyBodyPieces.Count == 0){
+                    AddEnemyBodyPiece();
+                }
+                else if (enemyBodyPieces.Count == 1)
+                {
+                    AddEnemyBodyPiece();
+                    moveLock = false;
+                    StartCoroutine(EnemyGlowReset());
                 }
             }
         }
@@ -77,6 +96,8 @@ public class GameController : MonoBehaviour
     /// </summary>
     void FixedUpdate() {
         if(!endScreenActive){
+
+            // TODO add addEnemyBodyPiece
 
             //move the worm
             MoveWorm();
@@ -99,6 +120,12 @@ public class GameController : MonoBehaviour
                 respawnFood = false;
             }
 
+            if(addEnemyBodyPiece == true)
+            {
+                AddEnemyBodyPiece();
+                addEnemyBodyPiece = false;
+            }
+
             //update the difficulty if necessary
             if(updateSpeed == true){
                 speed += 0.0005f;
@@ -117,6 +144,11 @@ public class GameController : MonoBehaviour
             for(int i = 0; i < bodyPieces.Count; i++){
                 bodyPieces[i].MoveBody();
             }
+            FindObjectOfType<EnemyController>().MoveEnemy();
+            for (int i = 0; i < enemyBodyPieces.Count; i++)
+            {
+                enemyBodyPieces[i].MoveBody();
+            }
         }
     }
 
@@ -134,6 +166,19 @@ public class GameController : MonoBehaviour
             temp2.x = Mathf.Round(bodyPieceObjects[i].transform.position.x);
             temp2.z = Mathf.Round(bodyPieceObjects[i].transform.position.z);
             bodyPieceObjects[i].transform.position = temp2;            
+        }
+
+        Vector3 temp3 = new Vector3(0, 0, 0);
+        temp3.x = Mathf.Round(enemy.transform.position.x);
+        temp3.z = Mathf.Round(enemy.transform.position.z);
+        enemy.transform.position = temp3;
+
+        for (int i = 0; i < enemyBodyPieceObjects.Count; i++)
+        {
+            Vector3 temp4 = new Vector3(0, 0, 0);
+            temp4.x = Mathf.Round(enemyBodyPieceObjects[i].transform.position.x);
+            temp4.z = Mathf.Round(enemyBodyPieceObjects[i].transform.position.z);
+            enemyBodyPieceObjects[i].transform.position = temp4;
         }
     }
 
@@ -195,6 +240,7 @@ public class GameController : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(GlowReset());
+        StartCoroutine(EnemyGlowReset());
     }
 
     /// <summary>
@@ -203,11 +249,14 @@ public class GameController : MonoBehaviour
     /// <returns>Vector3 with random X and Y within bounds</returns> 
     private Vector3 SpawnLocation()
     {
+        // TODO also check enemy body pieces location
+
         //suspend movement until the food has a new location
         moveLock = true;
 
         Vector3 location = new Vector3(Random.Range(-12, 12), 0, Random.Range(-6, 6));
         Vector3 headPosition = player.transform.position;
+        Vector3 enemyHeadPosition = enemy.transform.position;
 
         //check if the head of the worm is where the randomly generated location is
         if((location.x == Mathf.Floor(headPosition.x) || location.x == Mathf.Ceil(headPosition.x)) &&
@@ -217,12 +266,32 @@ public class GameController : MonoBehaviour
             return SpawnLocation();
         }
 
+        if ((location.x == Mathf.Floor(enemyHeadPosition.x) || location.x == Mathf.Ceil(enemyHeadPosition.x)) &&
+                (location.z == Mathf.Floor(enemyHeadPosition.z) || location.z == Mathf.Ceil(enemyHeadPosition.z)))
+        {
+
+            //retry if worm is at location
+            return SpawnLocation();
+        }
+
         //check if he body of the worm is where the randomly generated location is
-        for(int i = 0; i < bodyPieces.Count; i++){
+        for (int i = 0; i < bodyPieces.Count; i++){
             Vector3 temp = bodyPieces[i].transform.position;
             if((location.x == Mathf.Floor(temp.x) || location.x == Mathf.Ceil(temp.x)) &&
             (location.z == Mathf.Floor(temp.z) || location.z == Mathf.Ceil(temp.z))){
                 
+                //retry if worm is at location
+                return SpawnLocation();
+            }
+        }
+
+        for (int i = 0; i < enemyBodyPieces.Count; i++)
+        {
+            Vector3 temp = enemyBodyPieces[i].transform.position;
+            if ((location.x == Mathf.Floor(temp.x) || location.x == Mathf.Ceil(temp.x)) &&
+            (location.z == Mathf.Floor(temp.z) || location.z == Mathf.Ceil(temp.z)))
+            {
+
                 //retry if worm is at location
                 return SpawnLocation();
             }
@@ -324,6 +393,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void Reset()
     {        
+        // TODO involve resetting enemy
         // Destroy / reset game objects
         StopAllCoroutines();
         foreach(GameObject b in bodyPieceObjects) 
@@ -345,5 +415,94 @@ public class GameController : MonoBehaviour
         snapToGrid = false;
         speed = 0.03f;   
         currentGlowFade = 0;
+    }
+
+    // TODO
+    public void EnemyDie()
+    {
+
+    }
+
+    /// <summary>
+    /// coroutine to fade the glow from the body of the worm
+    /// </summary>
+    private IEnumerator EnemyGlowFade()
+    {
+        for (int i = enemyBodyPieces.Count - 1; i >= 0; i--)
+        {
+            enemyCurrentGlowFade = i;
+            StopCoroutine(EnemyGlowReset());
+            // Wait for 1 second to stop glow
+            yield return new WaitForSeconds(1.0f);
+
+            // Take the next body piece in the list and start its glow fade
+            enemyBodyPieces[i].GlowFade();
+        }
+
+    }
+
+    /// <summary>
+    /// coroutine to reset the glow for the worm
+    /// </summary>    
+    private IEnumerator EnemyGlowReset()
+    {
+        StopCoroutine(EnemyGlowFade());
+        for (int i = enemyCurrentGlowFade; i <= enemyBodyPieces.Count - 1; i++)
+        {
+            // Wait for .1 seconds to stop glow
+            yield return new WaitForSeconds(0.1f);
+
+            // Take the next body piece in the list and start its glow fade
+            enemyBodyPieces[i].GlowReset();
+        }
+
+        // Wait for 1 second, then start the glow fade
+        yield return new WaitForSeconds(1.0f);
+        StartCoroutine(EnemyGlowFade());
+    }
+
+    /// <summary>
+    /// Adds a body piece to the worm
+    /// </summary>
+    public void AddEnemyBodyPiece()
+    {
+        //checks if the worm has any body pieces
+        if (enemyBodyPieceObjects.Count == 0)
+        {
+            Vector3 position = enemy.transform.position;
+            Vector3 velocity = EnemyController.velocity;
+            AddEnemyBodyPieceHelper(position, velocity);
+        }
+        else
+        {
+            Vector3 position = enemyBodyPieces[enemyBodyPieces.Count - 1].transform.position;
+            Vector3 velocity = enemyBodyPieces[enemyBodyPieces.Count - 1].velocity;
+            AddEnemyBodyPieceHelper(position, velocity);
+        }
+    }
+
+    /// <summary>
+    /// helper function to create a new bodypiece and add it to the lists
+    /// </summary>
+    ///<param name="position">The position of the current tail</param>
+    ///<param name="velocity">The velocity of the current tail</param>
+    private void AddEnemyBodyPieceHelper(Vector3 position, Vector3 velocity)
+    {
+
+        //set the spawn location 1 unit behind the current tail
+        if (velocity.x > 0)
+            position.x = position.x - 1f;
+        else if (velocity.x < 0)
+            position.x = position.x + 1f;
+        else if (velocity.z > 0)
+            position.z = position.z - 1f;
+        else if (velocity.z < 0)
+            position.z = position.z + 1f;
+
+        //create the object, store it in the bodypiece lists, then give it a number
+        enemyBodyPieceObjects.Add(Object.Instantiate(prefabEnemyBodyPiece, position, Quaternion.identity));
+        int bodyPieceNum = enemyBodyPieceObjects.Count - 1;
+        enemyBodyPieces.Add(enemyBodyPieceObjects[bodyPieceNum].GetComponent<EnemyBodyController>());
+        enemyBodyPieces[bodyPieceNum].bodyPieceNum = bodyPieceNum;
     }
 }

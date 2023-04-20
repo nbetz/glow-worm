@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
             GameController.updateSpeed = true;
             GameController.score += 10;
 
+            // TODO update for when map size is increased
             //win condition
             if(GameController.score >= 3210)
                 FindObjectOfType<GameController>().Win();
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
             float colliderPositionX = collider.transform.position.x;
             float colliderPositionZ = collider.transform.position.z;
             
+            // TODO add condition for hitting enemy
             if(velocity.x > 0 &&  colliderPositionX > transform.position.x)
                 FindObjectOfType<GameController>().Die();
             else if(velocity.x < 0 && colliderPositionX < transform.position.x)

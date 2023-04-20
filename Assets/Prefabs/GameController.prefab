@@ -44,4 +44,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefabPlayer: {fileID: 8800222212666867038, guid: a4f04d302448b344f88b12f57e647542, type: 3}
+  prefabEnemy: {fileID: 8800222212666867038, guid: 722215fe463703e449135f2944d15a46, type: 3}
+  prefabEnemyBodyPiece: {fileID: 7066294884300423683, guid: 2574f5cb3137aed4280ea47c521db826, type: 3}
   prefabBodyPiece: {fileID: 7066294884300423683, guid: 5ffcbf24754723f488db2d4e899d5836, type: 3}
+  prefabFood: {fileID: 0}
+  player: {fileID: 0}
+  food: {fileID: 0}
+  gameHUD: {fileID: 0}
+  deathScreen: {fileID: 0}
+  foodParticle: {fileID: 0}
+  playerParticle: {fileID: 0}
+  enemy: {fileID: 0}
+  endScreenActive: 0
