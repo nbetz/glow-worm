@@ -13,17 +13,23 @@ public class UISettings : MonoBehaviour
     // Color variables
     public FlexibleColorPicker wormColorPicker;
     public FlexibleColorPicker foodColorPicker;
+    public FlexibleColorPicker enemyColorPicker;
+    
     public Material wormMaterial;
     public Material foodMaterial;
+    public Material enemyMaterial;
 
     public Color defaultWormColor;
     public Color defaultFoodColor;
+    public Color defaultEnemyColor;
     
     private Color savedWormColor;
     private Color savedFoodColor;
+    private Color savedEnemyColor;
 
     public Image currentWormColor;
     public Image currentFoodColor;
+    public Image currentEnemyColor;
 
     /// <summary>
     /// Unity start function - ran on first frame
@@ -33,25 +39,32 @@ public class UISettings : MonoBehaviour
         // Color - get the saved colors
         Color tempColor1;
         Color tempColor2;
+        Color tempColor3;
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("WormColor"), out tempColor1))
             savedWormColor = tempColor1;
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("FoodColor"), out tempColor2))
             savedFoodColor = tempColor2;
+        if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("EnemyColor"), out tempColor3))
+            savedEnemyColor = tempColor3;
 
         // Set the current color images to the saved colors
         currentWormColor.color = savedWormColor;
         currentFoodColor.color = savedFoodColor;
+        currentEnemyColor.color = savedEnemyColor;
         
         // Set the worm material colors to the saved colors
         wormMaterial.color = savedWormColor;
         foodMaterial.color = savedFoodColor;
+        enemyMaterial.color = savedEnemyColor;
         
         // Set the color picker colors to the saved colors
         wormColorPicker.color = savedWormColor;
         foodColorPicker.color = savedFoodColor;
+        enemyColorPicker.color = savedEnemyColor;
 
         wormColorPicker.startingColor = savedWormColor;
         foodColorPicker.startingColor = savedFoodColor;
+        enemyColorPicker.startingColor = savedEnemyColor;
 
     }
 
@@ -80,7 +93,14 @@ public class UISettings : MonoBehaviour
             // Save it to a string
             PlayerPrefs.SetString("FoodColor", "#" + ColorUtility.ToHtmlStringRGB(foodColorPicker.color));
         }
-            
+        if(enemyColorPicker.color != savedEnemyColor)
+        {
+            enemyMaterial.color = enemyColorPicker.color;
+            enemyMaterial.SetColor("_EmissionColor", enemyColorPicker.color);
+
+            // Save it to a string
+            PlayerPrefs.SetString("EnemyColor", "#" + ColorUtility.ToHtmlStringRGB(enemyColorPicker.color));
+        }
     }
 
     /// <summary>
@@ -91,6 +111,7 @@ public class UISettings : MonoBehaviour
         // Set the current color images to the saved colors
         currentWormColor.color = savedWormColor;
         currentFoodColor.color = savedFoodColor;
+        currentEnemyColor.color = savedEnemyColor;
         
         gameObject.SetActive(false);
         mainMenuCanvas.SetActive(true);
@@ -107,6 +128,7 @@ public class UISettings : MonoBehaviour
         PlayerPrefs.SetInt("HighScore", 0);
         PlayerPrefs.SetString("WormColor", "#" + ColorUtility.ToHtmlStringRGB(defaultWormColor));
         PlayerPrefs.SetString("FoodColor", "#" + ColorUtility.ToHtmlStringRGB(defaultFoodColor));
+        PlayerPrefs.SetString("EnemyColor", "#" + ColorUtility.ToHtmlStringRGB(defaultEnemyColor));
         SceneManager.LoadScene("MainMenu");
 
     }
