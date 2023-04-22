@@ -17,8 +17,11 @@ public class UIMainMenu : MonoBehaviour
     
     public Material wormMaterial;
     public Material foodMaterial;
+    //public Material enemyMaterial;
+
     private Color savedWormColor;
     private Color savedFoodColor;
+    //private Color savedEnemyColor;
 
     public Animation animation;
 
@@ -33,10 +36,14 @@ public class UIMainMenu : MonoBehaviour
         
         Color tempColor1;
         Color tempColor2;
+        //Color tempColor3;
+
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("WormColor"), out tempColor1))
             savedWormColor = tempColor1;
         if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("FoodColor"), out tempColor2))
             savedFoodColor = tempColor2;
+        //if (ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("EnemyColor"), out tempColor3))
+            //savedEnemyColor = tempColor3;
 
         titleText.color = savedWormColor;
 
@@ -48,6 +55,9 @@ public class UIMainMenu : MonoBehaviour
         
         foodMaterial.color = savedFoodColor;
         foodMaterial.SetColor("_EmissionColor", savedFoodColor);
+
+        //enemyMaterial.color = savedEnemyColor;
+        //enemyMaterial.SetColor("_EmissionColor", savedEnemyColor);
     }
 
     public void ClickPlay()
