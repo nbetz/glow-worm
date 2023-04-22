@@ -23,6 +23,11 @@ public class GameController : MonoBehaviour
     public GameObject foodParticle;
     public GameObject playerParticle;
     public GameObject enemy;
+    public AudioSource ate;
+    public AudioSource death;
+    public AudioSource backgroundAudio;
+    public AudioSource gameoverAudio;
+    
 
     public bool endScreenActive = false;
     public static float marginOfError = 0.0005f;
@@ -46,6 +51,8 @@ public class GameController : MonoBehaviour
     void Start()
     {
         //create the player at 0,0,0
+        backgroundAudio.Play ();
+        
         moveLock = true;
         player = Object.Instantiate(prefabPlayer, new Vector3(0f, 0f, 0f), Quaternion.identity);
         enemy = Object.Instantiate(prefabEnemy, new Vector3(5f, 0f, 5f), Quaternion.identity);
@@ -232,6 +239,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void RespawnFood()
     {
+        ate.Play ();
         Vector3 spawnLocation = SpawnLocation();
         food.transform.SetPositionAndRotation(spawnLocation, Quaternion.identity);
         Instantiate(foodParticle, spawnLocation, Quaternion.identity);
@@ -351,6 +359,9 @@ public class GameController : MonoBehaviour
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
         
+        backgroundAudio.volume = 0;
+        gameoverAudio.Play ();
+        death.Play ();
         PlayerPrefs.SetInt("PrevScore", score);
         deathScreen.GetComponent<UIDeathScreen>().titleTextString = "GAME OVER!";
         deathScreen.GetComponent<UIDeathScreen>().backgroundColor = new Color (0.368f, 0f, 0f, 0f);
@@ -374,6 +385,9 @@ public class GameController : MonoBehaviour
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
         
+        backgroundAudio.volume = 0;
+        gameoverAudio.Play ();
+        death.Play ();
         PlayerPrefs.SetInt("PrevScore", score);
         deathScreen.GetComponent<UIDeathScreen>().titleTextString = "YOU WIN!";
         deathScreen.GetComponent<UIDeathScreen>().backgroundColor = new Color (0.368f, 0.368f, 0.368f, 0f);

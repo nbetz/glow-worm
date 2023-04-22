@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private static int goDownWait = 0;
 
     public GameObject foodPickupParticle;
+    public AudioSource move;
 
     /// <summary>
     /// Unity trigger function that is ran anytime this object collides
@@ -83,6 +84,7 @@ public class PlayerController : MonoBehaviour
             && (goDown != true && goLeft != true && goRight != true && goUp != true && waiting != true))
         {
             //queue going right immediately unless were on the grid then queue going right in 2 frames
+            move.Play ();
             if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
                 && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
                     goRight = true;
@@ -98,6 +100,7 @@ public class PlayerController : MonoBehaviour
             && (goDown != true && goLeft != true && goRight != true && goUp != true && waiting != true))
         {
             //queue going left immediately unless were on the grid then queue going left in 2 frames
+            move.Play ();
             if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
                 && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
                     goLeft = true;
@@ -113,6 +116,7 @@ public class PlayerController : MonoBehaviour
             && (goDown != true && goLeft != true && goRight != true && goUp != true && waiting != true))
         {
             //queue going up immediately unless were on the grid then queue going up in 2 frames
+            move.Play ();
             if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
                 && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
                     goUp = true;
@@ -128,6 +132,7 @@ public class PlayerController : MonoBehaviour
             && (goDown != true && goLeft != true && goRight != true && goUp != true && waiting != true))
         {
             //queue going down immediately unless were on the grid then queue going down in 2 frames
+            move.Play ();
             if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
                 && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
                     goDown = true;

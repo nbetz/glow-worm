@@ -53,7 +53,7 @@ public class UIMainMenu : MonoBehaviour
     public void ClickPlay()
     {
         animation.Play("MainMenuClose");
-        //SceneManager.LoadScene("Game");
+        SceneManager.LoadScene("Game");
         StartCoroutine(Delay());
     }
 
