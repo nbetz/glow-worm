@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -7,6 +9,8 @@ public class PlayerController : MonoBehaviour
     public static Vector3 velocity = new Vector3(GameController.speed, 0, 0);
     public static List<Vector3> lastRotatePositionQueue = new List<Vector3>();
     public static List<Vector3> lastVelocityQueue = new List<Vector3>();
+
+    public Rigidbody rb;
 
     private static bool goLeft = false;
     private static bool goRight = false;
@@ -17,6 +21,7 @@ public class PlayerController : MonoBehaviour
     private static int goRightWait = 0;
     private static int goUpWait = 0;
     private static int goDownWait = 0;
+
 
     public GameObject foodPickupParticle;
     public AudioSource move;
@@ -71,6 +76,9 @@ public class PlayerController : MonoBehaviour
     {
         //set fixedUpdate time to 100FPS
         Time.fixedDeltaTime = 0.01f;
+
+        rb = GetComponent<Rigidbody>();
+        rb.velocity = new Vector3(2, 0, 0);
     }
 
     /// <summary>
@@ -92,7 +100,7 @@ public class PlayerController : MonoBehaviour
                 {
                     goRightWait = 2;
                     waiting = true;
-                }
+            }
         }
 
         //checks to see if the player is trying to go left and if it is already moving on that axis
@@ -110,11 +118,11 @@ public class PlayerController : MonoBehaviour
                 waiting = true;
             }
         }
-
         //checks to see if the player is trying to go up and if it is already moving on that axis
         if ((Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && velocity.z == 0
             && (goDown != true && goLeft != true && goRight != true && goUp != true && waiting != true))
         {
+
             //queue going up immediately unless were on the grid then queue going up in 2 frames
             move.Play ();
             if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
@@ -156,10 +164,10 @@ public class PlayerController : MonoBehaviour
             if ((Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
                 && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
-
                 //change the velocity so the direction changes
                 velocity.x = 0;
                 velocity.z = GameController.speed;
+                rb.velocity = new Vector3(0, 0, 2);
 
                 //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                 GameController.snapToGrid = true;
@@ -168,7 +176,6 @@ public class PlayerController : MonoBehaviour
                 //add the velocity and rounded position to the lastRotatePositionQueue
                 lastRotatePositionQueue.Add(AlignToGrid());
                 lastVelocityQueue.Add(velocity);
-
                 goUp = false;
             }
         }
@@ -179,8 +186,11 @@ public class PlayerController : MonoBehaviour
                 && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
                 //change the velocity so the direction changes
-                velocity.x = 0;
+
                 velocity.z = -GameController.speed;
+                velocity.x = 0;
+                rb.velocity = new Vector3(0, 0, -2);
+
 
                 //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                 GameController.snapToGrid = true;
@@ -200,8 +210,12 @@ public class PlayerController : MonoBehaviour
                 && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
                 //change the velocity so the direction changes
-                velocity.z = 0;
+
                 velocity.x = -GameController.speed;
+                velocity.z = 0;
+                rb.velocity = new Vector3(-2, 0, 0);
+
+
 
                 //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                 GameController.snapToGrid = true;
@@ -221,8 +235,10 @@ public class PlayerController : MonoBehaviour
                 && (Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
             {
                 //change the velocity so the direction changes
-                velocity.z = 0;
+
                 velocity.x = GameController.speed;
+                velocity.z = 0;
+                rb.velocity = new Vector3(2, 0, 0);
 
                 //informs FixedUpdate() in gamecontroller that it needs to snap the body to the grid
                 GameController.snapToGrid = true;
@@ -231,14 +247,13 @@ public class PlayerController : MonoBehaviour
                 //add the velocity and rounded position to the lastRotatePositionQueue
                 lastRotatePositionQueue.Add(AlignToGrid());
                 lastVelocityQueue.Add(velocity);
-
                 goRight = false;
             }
         }
 
         //move the head
-        if (snapped == false)
-            transform.Translate(velocity);
+        //if (snapped == true)
+            //transform.Translate(velocity);
 
         //skip the number of frames needed before moving
         //the player in the direction they want on the next frame 
