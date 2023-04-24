@@ -28,9 +28,20 @@ public class PlayerController : MonoBehaviour
     /// <param name="collider"></param>
     void OnTriggerEnter(Collider collider)
     {
+        GameController gc = FindObjectOfType<GameController>();
+
         //ends the game if the worm touches the border
         if (collider.gameObject.tag == "Border")
-            FindObjectOfType<GameController>().Die();
+        {
+            if (GameController.score > PlayerPrefs.GetInt("HighScore"))
+            {
+                gc.Win();
+            }
+            else
+            {
+                gc.Die();
+            }
+        }
 
         //adds a body piece and moves the food if the worm touches the food    
         if(collider.gameObject.tag == "Food")
@@ -42,25 +53,75 @@ public class PlayerController : MonoBehaviour
 
             // TODO update for when map size is increased
             //win condition
-            if(GameController.score >= 3210)
-                FindObjectOfType<GameController>().Win();
+            if(GameController.score >= 3210 || GameController.bodyPieces.Count > 322)
+                gc.Win();
+        }
+        if (collider.gameObject.tag != "Body")
+        {
+            Debug.Log(collider.gameObject.tag);
         }
 
         //ends the game if the worm touches a body piece in the direction its moving
-        if(collider.gameObject.tag == "Body")
+        if (collider.gameObject.tag == "Body" || collider.gameObject.tag == "Enemy" || collider.gameObject.tag == "EnemyBody")
         {
             float colliderPositionX = collider.transform.position.x;
             float colliderPositionZ = collider.transform.position.z;
-            
+
+            if (collider.gameObject.tag == "EnemyBody" || collider.gameObject.tag == "Enemy")
+            {
+                Debug.Log(colliderPositionX);
+                Debug.Log(colliderPositionZ);
+                Debug.Log(transform.position.x);
+                Debug.Log(transform.position.z);
+                Debug.Log(velocity.x);
+                Debug.Log(velocity.z);
+            }
+
             // TODO add condition for hitting enemy
-            if(velocity.x > 0 &&  colliderPositionX > transform.position.x)
-                FindObjectOfType<GameController>().Die();
+            if (velocity.x > 0 &&  colliderPositionX > transform.position.x)
+            {
+                if(GameController.score > PlayerPrefs.GetInt("HighScore"))
+                {
+                    gc.Win();
+                }
+                else
+                {
+                    gc.Die();
+                }
+            }
             else if(velocity.x < 0 && colliderPositionX < transform.position.x)
-                FindObjectOfType<GameController>().Die();
+            {
+                if (GameController.score > PlayerPrefs.GetInt("HighScore"))
+                {
+                    gc.Win();
+                }
+                else
+                {
+                    gc.Die();
+                }
+            }
             else if(velocity.z > 0 && colliderPositionZ > transform.position.z)
-                FindObjectOfType<GameController>().Die();
+            {
+                if (GameController.score > PlayerPrefs.GetInt("HighScore"))
+                {
+                    gc.Win();
+                }
+                else
+                {
+                    gc.Die();
+                }
+            }
             else if(velocity.z < 0 && colliderPositionZ < transform.position.z)
-                FindObjectOfType<GameController>().Die();
+            {
+                if (GameController.score > PlayerPrefs.GetInt("HighScore"))
+                {
+                    gc.Win();
+                }
+                else
+                {
+                    gc.Die();
+                }
+            }
         }
     }
 
@@ -71,6 +132,8 @@ public class PlayerController : MonoBehaviour
     {
         //set fixedUpdate time to 100FPS
         Time.fixedDeltaTime = 0.01f;
+        Light light = GetComponentInChildren<Light>();
+        light.color = GetComponentInChildren<Renderer>().material.GetColor("_EmissionColor");
     }
 
     /// <summary>

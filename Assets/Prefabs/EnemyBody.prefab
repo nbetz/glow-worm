@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8652626563831059102}
   m_Layer: 6
   m_Name: Cube
-  m_TagString: Body
+  m_TagString: EnemyBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
@@ -138,7 +138,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0.99215686, g: 0, b: 0.883898, a: 1}
-  m_Intensity: 1
+  m_Intensity: 3
   m_Range: 7
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 2590248142244254505}
   m_Layer: 0
   m_Name: EnemyBody
-  m_TagString: Body
+  m_TagString: EnemyBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

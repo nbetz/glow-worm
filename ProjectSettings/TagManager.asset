@@ -8,6 +8,8 @@ TagManager:
   - Body
   - Food
   - Test
+  - Enemy
+  - EnemyBody
   layers:
   - Default
   - TransparentFX

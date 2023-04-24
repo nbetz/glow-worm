@@ -59,8 +59,7 @@ public class GameController : MonoBehaviour
 
         //create the food at a random location
         food = Object.Instantiate(prefabFood, SpawnLocation(), Quaternion.identity);
-
-        
+        food.GetComponentInChildren<Light>().color = food.GetComponentInChildren<Renderer>().material.GetColor("_EmissionColor");
     }
 
     /// <summary>
@@ -84,10 +83,10 @@ public class GameController : MonoBehaviour
                     StartCoroutine(GlowReset());
                 }
 
-                if(enemyBodyPieces.Count == 0){
+                if(enemyBodyPieces.Count == 0 && enemy != null){
                     AddEnemyBodyPiece();
                 }
-                else if (enemyBodyPieces.Count == 1)
+                else if (enemyBodyPieces.Count == 1 && enemy != null)
                 {
                     AddEnemyBodyPiece();
                     moveLock = false;
@@ -103,8 +102,6 @@ public class GameController : MonoBehaviour
     /// </summary>
     void FixedUpdate() {
         if(!endScreenActive){
-
-            // TODO add addEnemyBodyPiece
 
             //move the worm
             MoveWorm();
@@ -127,7 +124,7 @@ public class GameController : MonoBehaviour
                 respawnFood = false;
             }
 
-            if(addEnemyBodyPiece == true)
+            if(addEnemyBodyPiece == true && enemy != null)
             {
                 AddEnemyBodyPiece();
                 addEnemyBodyPiece = false;
@@ -147,11 +144,17 @@ public class GameController : MonoBehaviour
     private void MoveWorm()
     {
         if(moveLock == false){
-            FindObjectOfType<PlayerController>().MovePlayer();
+            player.GetComponent<PlayerController>().MovePlayer();
+            //FindObjectOfType<PlayerController>().MovePlayer();
             for(int i = 0; i < bodyPieces.Count; i++){
                 bodyPieces[i].MoveBody();
             }
-            FindObjectOfType<EnemyController>().MoveEnemy();
+            if(enemy != null)
+            {
+                enemy.GetComponent<EnemyController>().MoveEnemy();
+            }
+
+            //FindObjectOfType<EnemyController>().MoveEnemy();
             for (int i = 0; i < enemyBodyPieces.Count; i++)
             {
                 enemyBodyPieces[i].MoveBody();
@@ -175,18 +178,22 @@ public class GameController : MonoBehaviour
             bodyPieceObjects[i].transform.position = temp2;            
         }
 
-        Vector3 temp3 = new Vector3(0, 0, 0);
-        temp3.x = Mathf.Round(enemy.transform.position.x);
-        temp3.z = Mathf.Round(enemy.transform.position.z);
-        enemy.transform.position = temp3;
-
-        for (int i = 0; i < enemyBodyPieceObjects.Count; i++)
+        if(enemy != null)
         {
-            Vector3 temp4 = new Vector3(0, 0, 0);
-            temp4.x = Mathf.Round(enemyBodyPieceObjects[i].transform.position.x);
-            temp4.z = Mathf.Round(enemyBodyPieceObjects[i].transform.position.z);
-            enemyBodyPieceObjects[i].transform.position = temp4;
+            Vector3 temp3 = new Vector3(0, 0, 0);
+            temp3.x = Mathf.Round(enemy.transform.position.x);
+            temp3.z = Mathf.Round(enemy.transform.position.z);
+            enemy.transform.position = temp3;
+
+            for (int i = 0; i < enemyBodyPieceObjects.Count; i++)
+            {
+                Vector3 temp4 = new Vector3(0, 0, 0);
+                temp4.x = Mathf.Round(enemyBodyPieceObjects[i].transform.position.x);
+                temp4.z = Mathf.Round(enemyBodyPieceObjects[i].transform.position.z);
+                enemyBodyPieceObjects[i].transform.position = temp4;
+            }
         }
+
     }
 
     /// <summary>
@@ -248,7 +255,10 @@ public class GameController : MonoBehaviour
 
         StopAllCoroutines();
         StartCoroutine(GlowReset());
-        StartCoroutine(EnemyGlowReset());
+        if(enemy != null)
+        {
+            StartCoroutine(EnemyGlowReset());
+        }
     }
 
     /// <summary>
@@ -264,7 +274,9 @@ public class GameController : MonoBehaviour
 
         Vector3 location = new Vector3(Random.Range(-12, 12), 0, Random.Range(-6, 6));
         Vector3 headPosition = player.transform.position;
-        Vector3 enemyHeadPosition = enemy.transform.position;
+        Vector3 enemyHeadPosition = new Vector3(-50, -50, -50);
+        if(enemy != null)
+            enemyHeadPosition = enemy.transform.position;
 
         //check if the head of the worm is where the randomly generated location is
         if((location.x == Mathf.Floor(headPosition.x) || location.x == Mathf.Ceil(headPosition.x)) &&
@@ -274,8 +286,8 @@ public class GameController : MonoBehaviour
             return SpawnLocation();
         }
 
-        if ((location.x == Mathf.Floor(enemyHeadPosition.x) || location.x == Mathf.Ceil(enemyHeadPosition.x)) &&
-                (location.z == Mathf.Floor(enemyHeadPosition.z) || location.z == Mathf.Ceil(enemyHeadPosition.z)))
+        if (enemy != null && ((location.x == Mathf.Floor(enemyHeadPosition.x) || location.x == Mathf.Ceil(enemyHeadPosition.x)) &&
+                (location.z == Mathf.Floor(enemyHeadPosition.z) || location.z == Mathf.Ceil(enemyHeadPosition.z))))
         {
 
             //retry if worm is at location
@@ -358,8 +370,9 @@ public class GameController : MonoBehaviour
         // Check for a new high score
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
-        
-        backgroundAudio.volume = 0;
+
+        backgroundAudio.Stop();
+        // backgroundAudio.volume = 0;
         gameoverAudio.Play ();
         death.Play ();
         PlayerPrefs.SetInt("PrevScore", score);
@@ -384,8 +397,9 @@ public class GameController : MonoBehaviour
         // Check for a new high score
         if (score > PlayerPrefs.GetInt("HighScore"))
             PlayerPrefs.SetInt("HighScore", score);
-        
-        backgroundAudio.volume = 0;
+
+        backgroundAudio.Stop();
+
         gameoverAudio.Play ();
         death.Play ();
         PlayerPrefs.SetInt("PrevScore", score);
@@ -407,33 +421,67 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void Reset()
     {        
-        // TODO involve resetting enemy
         // Destroy / reset game objects
         StopAllCoroutines();
         foreach(GameObject b in bodyPieceObjects) 
             Destroy(b);
         bodyPieceObjects.Clear();
         bodyPieces.Clear();
+
+        foreach (GameObject b in enemyBodyPieceObjects)
+            Destroy(b);
+        enemyBodyPieceObjects.Clear();
+        enemyBodyPieces.Clear();
+
+
+        speed = 0.03f;
+
         PlayerController.lastRotatePositionQueue.Clear();
         PlayerController.lastVelocityQueue.Clear();
         PlayerController.velocity = new Vector3(speed, 0, 0);
+        EnemyController.lastRotatePositionQueue.Clear();
+        EnemyController.lastVelocityQueue.Clear();
+        EnemyController.velocity = new Vector3(speed, 0, 0);
         Destroy(player);
         Destroy(food);
+        Destroy(enemy);
         player = null;
         food = null;
+        enemy = null;
         score = 0;
         moveLock = false;
         addBodyPiece = false;
+        addEnemyBodyPiece = false;
         updateSpeed = false;
         respawnFood = false;
         snapToGrid = false;
-        speed = 0.03f;   
         currentGlowFade = 0;
+        enemyCurrentGlowFade = 0;
     }
 
     // TODO
     public void EnemyDie()
     {
+        StopCoroutine(EnemyGlowReset());
+        StopCoroutine(EnemyGlowFade());
+        // Instantiate particle on player
+        if (enemy != null)
+        {
+            Instantiate(foodParticle, enemy.transform.position, Quaternion.identity);
+        }
+
+        // Destroy / reset game objects
+        foreach (GameObject b in enemyBodyPieceObjects)
+            Destroy(b);
+        enemyBodyPieceObjects.Clear();
+        enemyBodyPieces.Clear();
+        Destroy(enemy);
+        enemy = null;
+
+        backgroundAudio.Stop();
+
+        addEnemyBodyPiece = false;
+        enemyCurrentGlowFade = 0;
 
     }
 
@@ -472,7 +520,10 @@ public class GameController : MonoBehaviour
 
         // Wait for 1 second, then start the glow fade
         yield return new WaitForSeconds(1.0f);
-        StartCoroutine(EnemyGlowFade());
+        if(enemy != null)
+        {
+            StartCoroutine(EnemyGlowFade());
+        }
     }
 
     /// <summary>

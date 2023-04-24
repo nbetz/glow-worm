@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 327333985621417159}
   - component: {fileID: 327333985621417160}
   - component: {fileID: 327333985621417161}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Food
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 0, g: 1, b: 0.6155405, a: 1}
-  m_Intensity: 2
+  m_Intensity: 3
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

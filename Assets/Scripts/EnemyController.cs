@@ -31,13 +31,14 @@ public class EnemyController : MonoBehaviour
         //adds a body piece and moves the food if the worm touches the food    
         if (collider.gameObject.tag == "Food")
         {
+            GameController.score -= 5;
             GameController.addEnemyBodyPiece = true;
             GameController.respawnFood = true;
         }
 
         // TODO update to include players and their body in this
         //ends the game if the worm touches a body piece in the direction its moving
-        if (collider.gameObject.tag == "Body")
+        if (collider.gameObject.tag == "Body" || collider.gameObject.tag == "Player" || collider.gameObject.tag == "EnemyBody")
         {
             float colliderPositionX = collider.transform.position.x;
             float colliderPositionZ = collider.transform.position.z;
@@ -58,6 +59,8 @@ public class EnemyController : MonoBehaviour
     {
         //set fixedUpdate time to 100FPS
         Time.fixedDeltaTime = 0.01f;
+        Light light = GetComponentInChildren<Light>();
+        light.color = GetComponentInChildren<Renderer>().material.GetColor("_EmissionColor");
     }
 
     // Update is called once per frame
@@ -72,20 +75,6 @@ public class EnemyController : MonoBehaviour
     {
         // create a map of the board where the food position is 1, any empty space is 0, and any space with a body piece (enemy or player) is -1
         GameController gc = FindObjectOfType<GameController>();
-
-        if (gc == null)
-        {
-            Debug.Log("broke");
-        }
-
-        if (gc.player == null)
-        {
-            Debug.Log("broke2");
-        }
-        if (gc.player.transform == null)
-        {
-            Debug.Log("broke3");
-        }
 
         Vector3 temp = new Vector3(0, 0, 0);
         temp.x = Mathf.Round(gc.player.transform.position.x);
@@ -230,92 +219,27 @@ public class EnemyController : MonoBehaviour
             }
 
         }
-        Debug.Log("path count: " + finalPath.Count);
-        Debug.Log("next move: " + finalPath[1].ToString());
-        Debug.Log("velocity x: " + velocity.x.ToString());
-        Debug.Log("velocity z: " + velocity.z.ToString());
-
-        // get distance heuristic to the food
-        if (finalPath[1].x > currentPos.x && velocity.x == 0)
+        
+        if(finalPath.Count >= 1)
         {
-            goRight = true;
-            Debug.Log("right");
-            /*if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
+            // get distance heuristic to the food
+            if (finalPath[1].x > currentPos.x && velocity.x == 0)
             {
                 goRight = true;
-                Debug.Log("right");
             }
-            else
+            else if (finalPath[1].x < currentPos.x && velocity.x == 0)
             {
-                goRightWait = 2;
-                waiting = true;
-                Debug.Log("right_waiting");
+                goLeft = true;          
             }
-*/
-        }
-        else if (finalPath[1].x < currentPos.x && velocity.x == 0)
-        {
-            goLeft = true;
-            Debug.Log("left");
-/*            //queue going left immediately unless were on the grid then queue going left in 2 frames
-            if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
+            else if (finalPath[1].z > currentPos.z && velocity.z == 0)
             {
-                goLeft = true;
-                Debug.Log("left");
+                goUp = true;              
             }
-            else
+            else if (finalPath[1].z < currentPos.z && velocity.z == 0)
             {
-                goLeftWait = 2;
-                waiting = true;
-                Debug.Log("left_waiting");
-            }*/
-
-        }
-        else if (finalPath[1].z > currentPos.z && velocity.z == 0)
-        {
-            goUp = true;
-            Debug.Log("up");
-            /*            //queue going up immediately unless were on the grid then queue going up in 2 frames
-                        if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                            && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                        { 
-                            goUp = true;
-                            Debug.Log("up");
-                        }
-                        else
-                        {
-                            goUpWait = 2;
-                            waiting = true;
-                            Debug.Log("up_waiting");
-
-                        }*/
-
-        }
-        else if (finalPath[1].z < currentPos.z && velocity.z == 0)
-        {
-            goDown = true;
-            Debug.Log("down");
-            /*            //queue going down immediately unless were on the grid then queue going down in 2 frames
-                        if (!(Mathf.Abs(transform.position.x) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.x) % 1.0f >= -GameController.speed)
-                            && !(Mathf.Abs(transform.position.z) % 1.0f <= GameController.speed && Mathf.Abs(transform.position.z) % 1.0f >= -GameController.speed))
-                        {
-                            goDown = true;
-                            Debug.Log("down");
-                        }
-                        else
-                        {
-                            Debug.Log("down_waiting");
-                            goDownWait = 2;
-                            waiting = true;
-                        }*/
-
-        }
-        else
-        {
-            Debug.Log("none");
-        }
+                goDown = true;
+            }
+        }  
     }
 
     private bool IsValidLocation(Vector3 loc)
@@ -328,7 +252,6 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    // TODO
     public void MoveEnemy()
     {
         bool snapped = false;

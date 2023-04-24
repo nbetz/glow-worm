@@ -34,9 +34,16 @@ public class UIDeathScreen : MonoBehaviour
     public void Click_TryAgain()
     {
         // Reload the game scene
-        FindObjectOfType<GameController>().endScreenActive = false;
-        FindObjectOfType<GameController>().deathScreen.SetActive(false);
-        FindObjectOfType<GameController>().gameHUD.SetActive(true);
+        GameController gc = FindObjectOfType<GameController>();
+        gc.gameoverAudio.Stop();
+        gc.endScreenActive = false;
+        gc.deathScreen.SetActive(false);
+        gc.gameHUD.SetActive(true);
+        gc.backgroundAudio.Play();
+
+        //FindObjectOfType<GameController>().endScreenActive = false;
+        //FindObjectOfType<GameController>().deathScreen.SetActive(false);
+        //FindObjectOfType<GameController>().gameHUD.SetActive(true);
         enabled = false;        
     }
 

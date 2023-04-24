@@ -38,6 +38,7 @@ public class EnemyBodyController : MonoBehaviour
         defaultColor = material.GetColor("_EmissionColor");
         material.SetColor("_EmissionColor", Color.black);
         light = GetComponentInChildren<Light>();
+        light.color = defaultColor;
         cube = this.gameObject.transform.GetChild(0).gameObject;
     }
 
@@ -51,7 +52,7 @@ public class EnemyBodyController : MonoBehaviour
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
         cube.layer = 0;
-        StartCoroutine(ColorFade(oldColor, Color.black, 0f, 0f, 0, 1.0f));
+        StartCoroutine(ColorFade(oldColor, Color.black, 2f, 0f, 0, 1.0f));
     }
 
     /// <summary>
@@ -63,7 +64,7 @@ public class EnemyBodyController : MonoBehaviour
         StopAllCoroutines();
         // Get the current color
         Color oldColor = material.GetColor("_EmissionColor");
-        StartCoroutine(ColorFade(oldColor, defaultColor, 0f, 1f, 6, 0.25f));
+        StartCoroutine(ColorFade(oldColor, defaultColor, 0f, 2f, 6, 0.25f));
         cube.layer = 6;
     }
 
@@ -85,6 +86,7 @@ public class EnemyBodyController : MonoBehaviour
             yield return null;
         }
         cube.layer = layer;
+        light.intensity = endFloat;
         material.SetColor("_EmissionColor", end); //without this, the value will end at something like 0.9992367
     }
 
